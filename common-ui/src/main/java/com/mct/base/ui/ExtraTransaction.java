@@ -1,7 +1,5 @@
 package com.mct.base.ui;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -111,7 +109,6 @@ class ExtraTransaction implements IExtraTransaction {
         if (!mFragmentIds.isEmpty()) {
             mFragmentIds.remove(mFragmentIds.size() - 1);
         }
-        Log.d("ddd", "popFragment: ");
         mFragmentManager.popBackStack();
     }
 
