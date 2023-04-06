@@ -1,10 +1,16 @@
 package com.mct.base.ui;
 
+import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
+
+import android.animation.Animator;
 import android.content.Context;
+import android.util.Log;
 import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.mct.base.ui.core.IBaseActivity;
 import com.mct.base.ui.core.IBaseFragment;
@@ -12,17 +18,39 @@ import com.mct.base.ui.core.IBaseView;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.core.IKeyboardManager;
 import com.mct.base.ui.transition.AnimationFactory;
+import com.mct.base.ui.transition.animator.CircularAnimator;
+import com.mct.base.ui.transition.animator.SlideAnimator;
+import com.mct.base.ui.transition.annotation.AnimDirection;
+import com.mct.base.ui.transition.annotation.Transit;
 
 public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView {
 
+    private static final int ANIM_DURATION = 300;
     private IBaseActivity mIBaseActivity;
     private IExtraTransaction mIExtraTransaction;
+    @Transit
+    private int mTransit = FragmentTransaction.TRANSIT_NONE;
 
     @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        return nextAnim < 0
-                ? AnimationFactory.createAnimation(nextAnim, enter, 300)
+    public Animation onCreateAnimation(@Transit int transit, boolean enter, int nextAnim) {
+        if (transit == Transit.TRANSIT_CUSTOM_ANIMATION) {
+            mTransit = Transit.TRANSIT_CUSTOM_ANIMATION;
+        }
+        return mTransit == Transit.TRANSIT_CUSTOM_ANIMATION
+                ? AnimationFactory.createAnimation(nextAnim, enter, ANIM_DURATION)
                 : super.onCreateAnimation(transit, enter, nextAnim);
+    }
+
+    @Nullable
+    @Override
+    public Animator onCreateAnimator(@Transit int transit, boolean enter, int nextAnim) {
+        if (transit == Transit.TRANSIT_CUSTOM_ANIMATOR) {
+            mTransit = Transit.TRANSIT_CUSTOM_ANIMATOR;
+        }
+        Log.e("ddd", "onCreateAnimator: " + mTransit + " " +enter);
+        return mTransit == Transit.TRANSIT_CUSTOM_ANIMATOR
+                ? new SlideAnimator(requireView(), LEFT, enter, ANIM_DURATION)
+                : super.onCreateAnimator(transit, enter, nextAnim);
     }
 
     @Override

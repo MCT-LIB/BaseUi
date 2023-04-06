@@ -17,7 +17,7 @@ import com.mct.base.demo.utils.Utils;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
 
 public class TestTransactionBodyFragment extends BaseFragment implements View.OnClickListener {
@@ -55,19 +55,29 @@ public class TestTransactionBodyFragment extends BaseFragment implements View.On
             case R.id.btn_replaceFragment:
                 extraTransaction.replaceFragment(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createAnimation(AnimationStyle.CUBEMOVE, AnimationDirection.LEFT)
+                        FragmentTransitionFactory.createAnimation(
+                                AnimationStyle.CUBE_MOVE, AnimDirection.LEFT,
+                                AnimationStyle.FLIP_CUBE, AnimDirection.DOWN
+                        )
                 );
                 break;
             case R.id.btn_replaceFragmentToStack:
                 extraTransaction.replaceFragmentToStack(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createAnimation(AnimationStyle.CUBEMOVE, AnimationDirection.LEFT)
+//                        FragmentTransitionFactory.createAnimation(
+//                                AnimationStyle.CUBE_MOVE, AnimDirection.LEFT,
+//                                AnimationStyle.FLIP_CUBE, AnimDirection.DOWN
+//                        )
+                        FragmentTransitionFactory.createAnimator()
                 );
                 break;
             case R.id.btn_replaceAndClearBackStack:
                 extraTransaction.replaceAndClearBackStack(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createAnimation(AnimationStyle.CUBEMOVE, AnimationDirection.LEFT)
+                        FragmentTransitionFactory.createAnimation(
+                                AnimationStyle.CUBE_MOVE, AnimDirection.LEFT,
+                                AnimationStyle.FLIP_CUBE, AnimDirection.DOWN
+                        )
                 );
                 break;
             case R.id.btn_clearBackStack:

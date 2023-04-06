@@ -16,7 +16,7 @@ import com.mct.base.demo.utils.Utils;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 
 public class TestAnimationBodyFragment extends BaseFragment implements View.OnClickListener {
 
@@ -49,19 +49,19 @@ public class TestAnimationBodyFragment extends BaseFragment implements View.OnCl
         int direction;
         switch (v.getId()) {
             case R.id.btn_Left:
-                direction = AnimationDirection.LEFT;
+                direction = AnimDirection.LEFT;
                 break;
             case R.id.btn_Right:
-                direction = AnimationDirection.RIGHT;
+                direction = AnimDirection.RIGHT;
                 break;
             case R.id.btn_Up:
-                direction = AnimationDirection.UP;
+                direction = AnimDirection.UP;
                 break;
             case R.id.btn_Down:
-                direction = AnimationDirection.DOWN;
+                direction = AnimDirection.DOWN;
                 break;
             default:
-                direction = AnimationDirection.NONE;
+                direction = AnimDirection.NONE;
                 break;
         }
         extraTransaction.replaceFragment(

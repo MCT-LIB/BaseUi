@@ -1,24 +1,23 @@
 package com.mct.base.ui.transition.animation;
 
-import static com.mct.base.ui.transition.annotation.AnimationDirection.DOWN;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.LEFT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.NONE;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.RIGHT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.UP;
+import static com.mct.base.ui.transition.annotation.AnimDirection.DOWN;
+import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.NONE;
+import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.UP;
 
 import android.view.animation.Transformation;
 
 import androidx.annotation.NonNull;
 
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 
 /**
  * Move Animation
  */
 public class MoveAnimation extends ViewPropertyAnimation {
 
-
-    protected final @AnimationDirection int mDirection;
+    protected final @AnimDirection int mDirection;
     protected final boolean mEnter;
 
     /**
@@ -29,7 +28,7 @@ public class MoveAnimation extends ViewPropertyAnimation {
      * @param duration  Duration of Animation
      * @return MoveAnimation
      */
-    public static @NonNull MoveAnimation create(@AnimationDirection int direction, boolean enter, long duration) {
+    public static @NonNull MoveAnimation create(@AnimDirection int direction, boolean enter, long duration) {
         switch (direction) {
             case UP:
             case DOWN:
@@ -42,7 +41,7 @@ public class MoveAnimation extends ViewPropertyAnimation {
         }
     }
 
-    private MoveAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+    private MoveAnimation(@AnimDirection int direction, boolean enter, long duration) {
         mDirection = direction;
         mEnter = enter;
         setDuration(duration);
@@ -50,7 +49,7 @@ public class MoveAnimation extends ViewPropertyAnimation {
 
     private static class VerticalMoveAnimation extends MoveAnimation {
 
-        private VerticalMoveAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        private VerticalMoveAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 
@@ -68,7 +67,7 @@ public class MoveAnimation extends ViewPropertyAnimation {
 
     private static class HorizontalMoveAnimation extends MoveAnimation {
 
-        private HorizontalMoveAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        private HorizontalMoveAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 

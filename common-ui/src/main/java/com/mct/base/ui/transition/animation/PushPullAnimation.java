@@ -1,23 +1,23 @@
 package com.mct.base.ui.transition.animation;
 
-import static com.mct.base.ui.transition.annotation.AnimationDirection.DOWN;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.LEFT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.NONE;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.RIGHT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.UP;
+import static com.mct.base.ui.transition.annotation.AnimDirection.DOWN;
+import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.NONE;
+import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.UP;
 
 import android.view.animation.Transformation;
 
 import androidx.annotation.NonNull;
 
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 
 /**
  * 3D Push/Pull Animation
  */
 public class PushPullAnimation extends ViewPropertyAnimation {
 
-    protected final @AnimationDirection int mDirection;
+    protected final @AnimDirection int mDirection;
     protected final boolean mEnter;
 
     /**
@@ -28,7 +28,7 @@ public class PushPullAnimation extends ViewPropertyAnimation {
      * @param duration  Duration of Animation
      * @return PushPullAnimation
      */
-    public static @NonNull PushPullAnimation create(@AnimationDirection int direction, boolean enter, long duration) {
+    public static @NonNull PushPullAnimation create(@AnimDirection int direction, boolean enter, long duration) {
         switch (direction) {
             case UP:
             case DOWN:
@@ -41,7 +41,7 @@ public class PushPullAnimation extends ViewPropertyAnimation {
         }
     }
 
-    private PushPullAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+    private PushPullAnimation(@AnimDirection int direction, boolean enter, long duration) {
         mDirection = direction;
         mEnter = enter;
         setDuration(duration);
@@ -49,7 +49,7 @@ public class PushPullAnimation extends ViewPropertyAnimation {
 
     private static class VerticalPushPullAnimation extends PushPullAnimation {
 
-        private VerticalPushPullAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        private VerticalPushPullAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 
@@ -75,7 +75,7 @@ public class PushPullAnimation extends ViewPropertyAnimation {
 
     private static class HorizontalPushPullAnimation extends PushPullAnimation {
 
-        private HorizontalPushPullAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        private HorizontalPushPullAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 

@@ -5,8 +5,7 @@ import androidx.annotation.AnimatorRes;
 import androidx.annotation.NonNull;
 
 import com.mct.base.ui.BaseFragment;
-import com.mct.base.ui.R;
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
 import com.mct.base.ui.transition.annotation.Transit;
 
@@ -15,22 +14,6 @@ public abstract class FragmentTransitionFactory {
     @NonNull
     public static FragmentTransition createDefaultTransition() {
         return new CustomFragmentTransition();
-    }
-
-    @NonNull
-    public static FragmentTransition createDefaultHorizontalTransition() {
-        return new CustomFragmentTransition(
-                R.anim.h_fragment_enter, R.anim.h_fragment_exit,
-                R.anim.h_fragment_pop_enter, R.anim.h_fragment_pop_exit
-        );
-    }
-
-    @NonNull
-    public static FragmentTransition createDefaultVerticalTransition() {
-        return new CustomFragmentTransition(
-                R.anim.v_fragment_enter, R.anim.v_fragment_exit,
-                R.anim.v_fragment_pop_enter, R.anim.v_fragment_pop_exit
-        );
     }
 
     @NonNull
@@ -56,30 +39,35 @@ public abstract class FragmentTransitionFactory {
 
     /**
      * Note: the anim enter, exit, popEnter, popExit<br/>
-     * was create by ({@link AnimationStyle} and {@link AnimationDirection}) the value always< 0 <br/>
+     * was create by ({@link AnimationStyle} and {@link AnimDirection}) the value always< 0 <br/>
      * {@link BaseFragment#onCreateAnimation(int, boolean, int)}
      */
     @NonNull
     public static FragmentTransition createAnimation(@AnimationStyle int style,
-                                                     @AnimationDirection int direction) {
+                                                     @AnimDirection int direction) {
         return createAnimation(style, direction, style, direction);
     }
 
     /**
      * Note: the anim enter, exit, popEnter, popExit<br/>
-     * was create by ({@link AnimationStyle} and {@link AnimationDirection}) the value always < 0<br/>
+     * was create by ({@link AnimationStyle} and {@link AnimDirection}) the value always < 0<br/>
      * {@link BaseFragment#onCreateAnimation(int, boolean, int)}
      */
     @NonNull
     public static FragmentTransition createAnimation(@AnimationStyle int style,
-                                                     @AnimationDirection int direction,
+                                                     @AnimDirection int direction,
                                                      @AnimationStyle int popStyle,
-                                                     @AnimationDirection int popDirection) {
+                                                     @AnimDirection int popDirection) {
         int enter = style | direction;
         int exit = style | direction;
         int popEnter = popStyle | popDirection;
         int popExit = popStyle | popDirection;
-        return createTransition(enter, exit, popEnter, popExit);
+        return new CustomFragmentTransition(enter, exit, popEnter, popExit, Transit.TRANSIT_CUSTOM_ANIMATION);
+    }
+
+    @NonNull
+    public static FragmentTransition createAnimator() {
+        return new CustomFragmentTransition(0, 0, 0, 0, Transit.TRANSIT_CUSTOM_ANIMATOR);
     }
 
     private FragmentTransitionFactory() {

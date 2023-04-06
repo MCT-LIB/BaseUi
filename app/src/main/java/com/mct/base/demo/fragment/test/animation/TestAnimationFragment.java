@@ -51,7 +51,7 @@ public class TestAnimationFragment extends BaseFragment {
                     sAnimationStyleName = "FLIP";
                     break;
                 case R.id.style_PUSHPULL:
-                    sAnimationStyle = AnimationStyle.PUSHPULL;
+                    sAnimationStyle = AnimationStyle.PUSH_PULL;
                     sAnimationStyleName = "PUSHPULL";
                     break;
                 case R.id.style_SIDES:
@@ -59,35 +59,35 @@ public class TestAnimationFragment extends BaseFragment {
                     sAnimationStyleName = "SIDES";
                     break;
                 case R.id.style_CUBEMOVE:
-                    sAnimationStyle = AnimationStyle.CUBEMOVE;
+                    sAnimationStyle = AnimationStyle.CUBE_MOVE;
                     sAnimationStyleName = "CUBEMOVE";
                     break;
                 case R.id.style_MOVECUBE:
-                    sAnimationStyle = AnimationStyle.MOVECUBE;
+                    sAnimationStyle = AnimationStyle.MOVE_CUBE;
                     sAnimationStyleName = "MOVECUBE";
                     break;
                 case R.id.style_PUSHMOVE:
-                    sAnimationStyle = AnimationStyle.PUSHMOVE;
+                    sAnimationStyle = AnimationStyle.PUSH_MOVE;
                     sAnimationStyleName = "PUSHMOVE";
                     break;
                 case R.id.style_MOVEPULL:
-                    sAnimationStyle = AnimationStyle.MOVEPULL;
+                    sAnimationStyle = AnimationStyle.MOVE_PULL;
                     sAnimationStyleName = "MOVEPULL";
                     break;
                 case R.id.style_FLIPMOVE:
-                    sAnimationStyle = AnimationStyle.FLIPMOVE;
+                    sAnimationStyle = AnimationStyle.FLIP_MOVE;
                     sAnimationStyleName = "FLIPMOVE";
                     break;
                 case R.id.style_MOVEFLIP:
-                    sAnimationStyle = AnimationStyle.MOVEFLIP;
+                    sAnimationStyle = AnimationStyle.MOVE_FLIP;
                     sAnimationStyleName = "MOVEFLIP";
                     break;
                 case R.id.style_FLIPCUBE:
-                    sAnimationStyle = AnimationStyle.FLIPCUBE;
+                    sAnimationStyle = AnimationStyle.FLIP_CUBE;
                     sAnimationStyleName = "FLIPCUBE";
                     break;
                 case R.id.style_CUBEFLIP:
-                    sAnimationStyle = AnimationStyle.CUBEFLIP;
+                    sAnimationStyle = AnimationStyle.CUBE_FLIP;
                     sAnimationStyleName = "CUBEFLIP";
                     break;
             }

@@ -1,25 +1,24 @@
 package com.mct.base.ui.transition.animation;
 
-import static com.mct.base.ui.transition.annotation.AnimationDirection.DOWN;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.LEFT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.NONE;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.RIGHT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.UP;
+import static com.mct.base.ui.transition.annotation.AnimDirection.DOWN;
+import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.NONE;
+import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.UP;
 
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Transformation;
 
 import androidx.annotation.NonNull;
 
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 
 /**
  * 3D Cube Animation
  */
 public class SidesAnimation extends ViewPropertyAnimation {
 
-
-    protected final @AnimationDirection int mDirection;
+    protected final @AnimDirection int mDirection;
     protected final boolean mEnter;
 
     /**
@@ -30,7 +29,7 @@ public class SidesAnimation extends ViewPropertyAnimation {
      * @param duration  Duration of Animation
      * @return SidesAnimation
      */
-    public static @NonNull SidesAnimation create(@AnimationDirection int direction, boolean enter, long duration) {
+    public static @NonNull SidesAnimation create(@AnimDirection int direction, boolean enter, long duration) {
         switch (direction) {
             case UP:
             case DOWN:
@@ -43,7 +42,7 @@ public class SidesAnimation extends ViewPropertyAnimation {
         }
     }
 
-    private SidesAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+    private SidesAnimation(@AnimDirection int direction, boolean enter, long duration) {
         mDirection = direction;
         mEnter = enter;
         setDuration(duration);
@@ -52,7 +51,7 @@ public class SidesAnimation extends ViewPropertyAnimation {
 
     private static class VerticalCubeAnimation extends SidesAnimation {
 
-        private VerticalCubeAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        private VerticalCubeAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 
@@ -79,7 +78,7 @@ public class SidesAnimation extends ViewPropertyAnimation {
 
     private static class HorizontalCubeAnimation extends SidesAnimation {
 
-        private HorizontalCubeAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        private HorizontalCubeAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 

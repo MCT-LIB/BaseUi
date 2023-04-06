@@ -1,25 +1,24 @@
 package com.mct.base.ui.transition.animation;
 
 
-import static com.mct.base.ui.transition.annotation.AnimationDirection.DOWN;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.LEFT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.NONE;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.RIGHT;
-import static com.mct.base.ui.transition.annotation.AnimationDirection.UP;
+import static com.mct.base.ui.transition.annotation.AnimDirection.DOWN;
+import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.NONE;
+import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
+import static com.mct.base.ui.transition.annotation.AnimDirection.UP;
 
 import android.view.animation.Transformation;
 
 import androidx.annotation.NonNull;
 
-import com.mct.base.ui.transition.annotation.AnimationDirection;
+import com.mct.base.ui.transition.annotation.AnimDirection;
 
 /**
  * 3D Flip Animation
  */
 public class FlipAnimation extends ViewPropertyAnimation {
 
-
-    protected final @AnimationDirection int mDirection;
+    protected final @AnimDirection int mDirection;
     protected final boolean mEnter;
 
     /**
@@ -30,7 +29,7 @@ public class FlipAnimation extends ViewPropertyAnimation {
      * @param duration  Duration of Animation
      * @return FlipAnimation
      */
-    public static @NonNull FlipAnimation create(@AnimationDirection int direction, boolean enter, long duration) {
+    public static @NonNull FlipAnimation create(@AnimDirection int direction, boolean enter, long duration) {
         switch (direction) {
             case UP:
             case DOWN:
@@ -43,7 +42,7 @@ public class FlipAnimation extends ViewPropertyAnimation {
         }
     }
 
-    private FlipAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+    private FlipAnimation(@AnimDirection int direction, boolean enter, long duration) {
         mDirection = direction;
         mEnter = enter;
         setDuration(duration);
@@ -51,7 +50,7 @@ public class FlipAnimation extends ViewPropertyAnimation {
 
     private static class VerticalFlipAnimation extends FlipAnimation {
 
-        public VerticalFlipAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        public VerticalFlipAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 
@@ -86,7 +85,7 @@ public class FlipAnimation extends ViewPropertyAnimation {
 
     private static class HorizontalFlipAnimation extends FlipAnimation {
 
-        public HorizontalFlipAnimation(@AnimationDirection int direction, boolean enter, long duration) {
+        public HorizontalFlipAnimation(@AnimDirection int direction, boolean enter, long duration) {
             super(direction, enter, duration);
         }
 
