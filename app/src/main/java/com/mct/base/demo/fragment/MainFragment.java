@@ -1,0 +1,47 @@
+package com.mct.base.demo.fragment;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.mct.base.demo.R;
+import com.mct.base.demo.fragment.test.TestAnimationFragment;
+import com.mct.base.demo.fragment.test.TestBackstackFragment;
+import com.mct.base.demo.fragment.test.TestDialogFragment;
+import com.mct.base.demo.utils.Utils;
+import com.mct.base.ui.BaseFragment;
+import com.mct.base.ui.transition.FragmentTransitionFactory;
+
+public class MainFragment extends BaseFragment {
+
+    int color = Utils.generateBrightColor();
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        view.setBackgroundColor(color);
+        view.findViewById(R.id.btn_test_backstack).setOnClickListener(v -> {
+            extraTransaction().replaceFragmentToStack(
+                    new TestBackstackFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE));
+        });
+        view.findViewById(R.id.btn_test_animation).setOnClickListener(v -> {
+            extraTransaction().replaceFragmentToStack(
+                    new TestAnimationFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE));
+        });
+        view.findViewById(R.id.btn_test_dialog).setOnClickListener(v -> {
+            extraTransaction().replaceFragmentToStack(
+                    new TestDialogFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE));
+        });
+        return view;
+    }
+
+}

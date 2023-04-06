@@ -5,10 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.mct.base.ui.abs.IExtraTransaction;
-import com.mct.base.ui.abs.IKeyboardManager;
+import com.mct.base.ui.core.IExtraTransaction;
+import com.mct.base.ui.core.IKeyboardManager;
 import com.mct.base.ui.transition.FragmentTransition;
-import com.mct.base.ui.transition.NoneFragmentTransition;
+import com.mct.base.ui.transition.FragmentTransitionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,6 @@ class ExtraTransaction implements IExtraTransaction {
     private final int mContainerId;
     private final FragmentManager mFragmentManager;
     private final IKeyboardManager mKeyboardManager;
-    private boolean mPendingDisableAutoHideSoftInput;
     private final List<Integer> mFragmentIds = new ArrayList<>();
 
     public ExtraTransaction(int mContainerId, FragmentManager mFragmentManager, IKeyboardManager mKeyboardManager) {
@@ -49,16 +48,14 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void replaceFragment(Fragment fragment) {
-        replaceFragment(fragment, new NoneFragmentTransition());
+        replaceFragment(fragment, FragmentTransitionFactory.createDefaultTransition());
     }
 
     @Override
     public void replaceFragment(Fragment fragment, FragmentTransition transition) {
         performHideSoftInput();
         if (isCurrentFragmentInBackStack()) {
-            mPendingDisableAutoHideSoftInput = true;
             popFragment();
-            mPendingDisableAutoHideSoftInput = true;
             replaceFragmentToStack(fragment, transition);
             return;
         }
@@ -70,8 +67,7 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void replaceFragmentToStack(Fragment fragment) {
-
-        replaceFragmentToStack(fragment, new NoneFragmentTransition());
+        replaceFragmentToStack(fragment, FragmentTransitionFactory.createDefaultTransition());
     }
 
     @Override
@@ -86,7 +82,7 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void replaceAndClearBackStack(Fragment fragment) {
-        replaceAndClearBackStack(fragment, new NoneFragmentTransition());
+        replaceAndClearBackStack(fragment, FragmentTransitionFactory.createDefaultTransition());
     }
 
     @Override
@@ -97,6 +93,7 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void clearBackStack() {
+        performHideSoftInput();
         if (getBackStackCount() > 0) {
             mFragmentIds.clear();
             mFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -165,10 +162,6 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     private void performHideSoftInput() {
-        if (mPendingDisableAutoHideSoftInput) {
-            mPendingDisableAutoHideSoftInput = false;
-            return;
-        }
         mKeyboardManager.hideSoftInput();
     }
 }

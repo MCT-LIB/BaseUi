@@ -15,10 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.Fragment;
 
-import com.mct.base.ui.abs.IBaseActivity;
-import com.mct.base.ui.abs.IBaseFragment;
-import com.mct.base.ui.abs.IExtraTransaction;
-import com.mct.base.ui.abs.IKeyboardManager;
+import com.mct.base.ui.core.IBaseActivity;
+import com.mct.base.ui.core.IBaseFragment;
+import com.mct.base.ui.core.IExtraTransaction;
+import com.mct.base.ui.core.IKeyboardManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -26,6 +26,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     private BaseActivityWrapper mBaseActivity;
     private KeyboardManagerWrapper mKeyboardManager;
     private IExtraTransaction mIExtraTransaction;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Abstract
+    ///////////////////////////////////////////////////////////////////////////
+
+    @IdRes
+    protected abstract int getContainerId();
+
+    protected abstract boolean showToastOnBackPressed();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // LifeCircle
+    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,25 +58,24 @@ public abstract class BaseActivity extends AppCompatActivity {
             return;
         }
         if (extraTransaction().getBackStackCount() == 0) {
-            if (mIsBackPressed) {
-                mIsBackPressed = false;
-                super.onBackPressed();
-            } else {
-                if (showToastOnBackPressed()) {
-                    mIsBackPressed = true;
-                    postDelay(() -> mIsBackPressed = false, 3000);
-                }
+            if (!mIsBackPressed && showToastOnBackPressed()) {
+                mIsBackPressed = true;
+                postDelay(() -> mIsBackPressed = false, 3000);
+                return;
             }
         } else {
             mIsBackPressed = false;
             extraTransaction().popFragment();
+            return;
         }
+        mIsBackPressed = false;
+        super.onBackPressed();
     }
 
-    @IdRes
-    protected abstract int getContainerId();
+    ///////////////////////////////////////////////////////////////////////////
+    // Impl
+    ///////////////////////////////////////////////////////////////////////////
 
-    protected abstract boolean showToastOnBackPressed();
 
     public IBaseActivity getBaseActivity() {
         return mBaseActivity;
@@ -88,6 +100,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void removeCallbacks(Runnable runnable) {
         mHandler.removeCallbacks(runnable);
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // SoftInput
+    ///////////////////////////////////////////////////////////////////////////
+
+    private Runnable hideSoftInputRunnable;
 
     protected void clearFocus() {
         View view = getWindow().getCurrentFocus();
@@ -119,13 +137,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void hideSoftInput() {
-        if (isSoftInputVisible()) {
-            View view = getWindow().getCurrentFocus();
-            if (view == null) {
-                view = getAndFocusFakeView();
-            }
-            hideSoftInput(view);
+        if (hideSoftInputRunnable == null) {
+            hideSoftInputRunnable = () -> {
+                if (isSoftInputVisible()) {
+                    View view = getWindow().getCurrentFocus();
+                    if (view == null) {
+                        view = getAndFocusFakeView();
+                    }
+                    hideSoftInput(view);
+                }
+            };
         }
+        removeCallbacks(hideSoftInputRunnable);
+        postDelay(hideSoftInputRunnable, 200);
     }
 
     protected boolean isSoftInputVisible() {

@@ -1,6 +1,4 @@
-package com.mct.base.ui.abs;
-
-import android.view.View;
+package com.mct.base.ui.core;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

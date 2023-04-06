@@ -1,4 +1,4 @@
-package com.mct.base.ui.abs;
+package com.mct.base.ui.core;
 
 public interface IBaseView {
 

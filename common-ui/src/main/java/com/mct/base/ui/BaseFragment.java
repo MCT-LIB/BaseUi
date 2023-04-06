@@ -1,20 +1,29 @@
 package com.mct.base.ui;
 
 import android.content.Context;
+import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.mct.base.ui.abs.IBaseActivity;
-import com.mct.base.ui.abs.IBaseFragment;
-import com.mct.base.ui.abs.IBaseView;
-import com.mct.base.ui.abs.IExtraTransaction;
-import com.mct.base.ui.abs.IKeyboardManager;
+import com.mct.base.ui.core.IBaseActivity;
+import com.mct.base.ui.core.IBaseFragment;
+import com.mct.base.ui.core.IBaseView;
+import com.mct.base.ui.core.IExtraTransaction;
+import com.mct.base.ui.core.IKeyboardManager;
+import com.mct.base.ui.transition.AnimationFactory;
 
 public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView {
 
     private IBaseActivity mIBaseActivity;
     private IExtraTransaction mIExtraTransaction;
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        return nextAnim < 0
+                ? AnimationFactory.createAnimation(nextAnim, enter, 300)
+                : super.onCreateAnimation(transit, enter, nextAnim);
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
