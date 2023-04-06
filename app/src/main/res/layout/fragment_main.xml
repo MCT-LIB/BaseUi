@@ -5,23 +5,24 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
+    android:paddingHorizontal="24dp"
     tools:context=".MainActivity">
 
     <Button
         android:id="@+id/btn_test_backstack"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Test Backstack" />
 
     <Button
         android:id="@+id/btn_test_animation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Test Animation" />
 
     <Button
         android:id="@+id/btn_test_dialog"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Test Dialog" />
 

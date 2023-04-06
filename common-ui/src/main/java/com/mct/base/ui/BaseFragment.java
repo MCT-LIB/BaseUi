@@ -78,6 +78,14 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
     @Override
     public boolean onBackPressed() {
+        Fragment fragment = childExtraTransaction().getCurrentFragment();
+        if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
+            return true;
+        }
+        if (childExtraTransaction().getBackStackCount() != 0) {
+            childExtraTransaction().popFragment();
+            return true;
+        }
         return false;
     }
 
@@ -91,5 +99,13 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
     @Override
     public void onError(Throwable t) {
+    }
+
+    public IExtraTransaction parentExtraTransaction() {
+        if (getParentFragment() instanceof BaseFragment) {
+            return ((BaseFragment) getParentFragment()).childExtraTransaction();
+        } else {
+            return childExtraTransaction();
+        }
     }
 }

@@ -29,6 +29,8 @@ public interface IExtraTransaction {
 
     void popFragment();
 
+    void popFragment(boolean immediate);
+
     /**
      * @param position is position of fragment in stack
      *                 position >= 0

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="#90CAF9">
+
+    <TextView
+        android:id="@+id/tv_AnimationStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColor="@android:color/white" />
+
+    <ImageView
+        android:id="@+id/btn_Left"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="start|center"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:src="@drawable/ic_left"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/btn_Right"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end|center"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:src="@drawable/ic_right"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/btn_Up"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="top|center"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:src="@drawable/ic_up"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/btn_Down"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|center"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:src="@drawable/ic_down"
+        tools:ignore="ContentDescription" />
+
+</FrameLayout>

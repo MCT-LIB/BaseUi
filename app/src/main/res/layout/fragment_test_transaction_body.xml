@@ -1,0 +1,93 @@
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="32dp"
+    android:paddingVertical="8dp"
+    tools:background="#64B5F6">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back stack count: "
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_backstack_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="1" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <EditText
+        android:id="@+id/edt_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:hint="Enter number"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="#BFFFFFFF"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_replaceFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Replace Fragment"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_replaceFragmentToStack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Replace Fragment To Stack"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_replaceAndClearBackStack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Replace And Clear Back Stack"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_clearBackStack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clear Back Stack"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_popFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pop Fragment"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_popFragmentToPosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pop Fragment To Position"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_popFragmentByAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pop Fragment By Amount"
+        android:textAllCaps="false" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

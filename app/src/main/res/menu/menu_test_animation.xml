@@ -1,0 +1,62 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".example.MainActivity">
+    <item
+        android:id="@+id/style_NONE"
+        android:title="NONE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_MOVE"
+        android:title="MOVE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_CUBE"
+        android:title="CUBE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_FLIP"
+        android:title="FLIP"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_PUSHPULL"
+        android:title="PUSHPULL"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_SIDES"
+        android:title="SIDES"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_CUBEMOVE"
+        android:title="CUBEMOVE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_MOVECUBE"
+        android:title="MOVECUBE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_PUSHMOVE"
+        android:title="PUSHMOVE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_MOVEPULL"
+        android:title="MOVEPULL"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_FLIPMOVE"
+        android:title="FLIPMOVE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_MOVEFLIP"
+        android:title="MOVEFLIP"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_FLIPCUBE"
+        android:title="FLIPCUBE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/style_CUBEFLIP"
+        android:title="CUBEFLIP"
+        app:showAsAction="never" />
+
+</menu>

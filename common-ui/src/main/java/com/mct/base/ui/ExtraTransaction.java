@@ -55,7 +55,7 @@ class ExtraTransaction implements IExtraTransaction {
     public void replaceFragment(Fragment fragment, FragmentTransition transition) {
         performHideSoftInput();
         if (isCurrentFragmentInBackStack()) {
-            popFragment();
+            popFragment(true);
             replaceFragmentToStack(fragment, transition);
             return;
         }
@@ -102,12 +102,22 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void popFragment() {
+        popFragment(false);
+    }
+
+    @Override
+    public void popFragment(boolean immediate) {
         performHideSoftInput();
         if (!mFragmentIds.isEmpty()) {
             mFragmentIds.remove(mFragmentIds.size() - 1);
         }
-        mFragmentManager.popBackStack();
+        if (immediate) {
+            mFragmentManager.popBackStackImmediate();
+        } else {
+            mFragmentManager.popBackStack();
+        }
     }
+
 
     @Override
     public void popFragmentToPosition(int position) {
