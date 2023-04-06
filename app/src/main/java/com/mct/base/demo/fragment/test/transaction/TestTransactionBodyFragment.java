@@ -64,11 +64,10 @@ public class TestTransactionBodyFragment extends BaseFragment implements View.On
             case R.id.btn_replaceFragmentToStack:
                 extraTransaction.replaceFragmentToStack(
                         new TestTransactionBodyFragment(),
-//                        FragmentTransitionFactory.createAnimation(
-//                                AnimationStyle.CUBE_MOVE, AnimDirection.LEFT,
-//                                AnimationStyle.FLIP_CUBE, AnimDirection.DOWN
-//                        )
-                        FragmentTransitionFactory.createAnimator()
+                        FragmentTransitionFactory.createAnimation(
+                                AnimationStyle.CUBE_MOVE, AnimDirection.LEFT,
+                                AnimationStyle.FLIP_CUBE, AnimDirection.DOWN
+                        )
                 );
                 break;
             case R.id.btn_replaceAndClearBackStack:

@@ -4,7 +4,6 @@ import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.util.Log;
 import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
@@ -18,9 +17,7 @@ import com.mct.base.ui.core.IBaseView;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.core.IKeyboardManager;
 import com.mct.base.ui.transition.AnimationFactory;
-import com.mct.base.ui.transition.animator.CircularAnimator;
 import com.mct.base.ui.transition.animator.SlideAnimator;
-import com.mct.base.ui.transition.annotation.AnimDirection;
 import com.mct.base.ui.transition.annotation.Transit;
 
 public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView {
@@ -47,7 +44,6 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         if (transit == Transit.TRANSIT_CUSTOM_ANIMATOR) {
             mTransit = Transit.TRANSIT_CUSTOM_ANIMATOR;
         }
-        Log.e("ddd", "onCreateAnimator: " + mTransit + " " +enter);
         return mTransit == Transit.TRANSIT_CUSTOM_ANIMATOR
                 ? new SlideAnimator(requireView(), LEFT, enter, ANIM_DURATION)
                 : super.onCreateAnimator(transit, enter, nextAnim);
