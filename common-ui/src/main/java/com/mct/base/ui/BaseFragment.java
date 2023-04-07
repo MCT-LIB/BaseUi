@@ -1,13 +1,15 @@
 package com.mct.base.ui;
 
-import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
-
 import android.animation.Animator;
 import android.content.Context;
+import android.graphics.Point;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Supplier;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -16,8 +18,8 @@ import com.mct.base.ui.core.IBaseFragment;
 import com.mct.base.ui.core.IBaseView;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.core.IKeyboardManager;
-import com.mct.base.ui.transition.AnimationFactory;
-import com.mct.base.ui.transition.animator.SlideAnimator;
+import com.mct.base.ui.transition.AnimFactory;
+import com.mct.base.ui.transition.animator.CircularAnimator;
 import com.mct.base.ui.transition.annotation.Transit;
 
 public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView {
@@ -28,25 +30,50 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Transit
     private int mTransit = FragmentTransaction.TRANSIT_NONE;
 
+    @Nullable
     @Override
     public Animation onCreateAnimation(@Transit int transit, boolean enter, int nextAnim) {
+        // The transit is TRANSIT_CUSTOM_ANIMATOR => stop create anim
+        if (transit == Transit.TRANSIT_CUSTOM_ANIMATOR) {
+            return super.onCreateAnimation(transit, enter, nextAnim);
+        }
         if (transit == Transit.TRANSIT_CUSTOM_ANIMATION) {
             mTransit = Transit.TRANSIT_CUSTOM_ANIMATION;
         }
-        return mTransit == Transit.TRANSIT_CUSTOM_ANIMATION
-                ? AnimationFactory.createAnimation(nextAnim, enter, ANIM_DURATION)
-                : super.onCreateAnimation(transit, enter, nextAnim);
+        if (mTransit == Transit.TRANSIT_CUSTOM_ANIMATION && nextAnim < 0) {
+            return AnimFactory.createAnimation(nextAnim, enter, ANIM_DURATION);
+        }
+        return super.onCreateAnimation(transit, enter, nextAnim);
     }
 
     @Nullable
     @Override
     public Animator onCreateAnimator(@Transit int transit, boolean enter, int nextAnim) {
+        // The transit is TRANSIT_CUSTOM_ANIMATION => stop create anim
+        if (transit == Transit.TRANSIT_CUSTOM_ANIMATION) {
+            return super.onCreateAnimator(transit, enter, nextAnim);
+        }
         if (transit == Transit.TRANSIT_CUSTOM_ANIMATOR) {
             mTransit = Transit.TRANSIT_CUSTOM_ANIMATOR;
         }
-        return mTransit == Transit.TRANSIT_CUSTOM_ANIMATOR
-                ? new SlideAnimator(requireView(), LEFT, enter, ANIM_DURATION)
-                : super.onCreateAnimator(transit, enter, nextAnim);
+        if (mTransit == Transit.TRANSIT_CUSTOM_ANIMATOR && nextAnim < 0) {
+            View view = getView();
+            Supplier<Animator> animator = () -> {
+                Point position = onRequestCircularPosition();
+                return AnimFactory.createAnimator(view, nextAnim, enter, ANIM_DURATION, position);
+            };
+            if (view == null) {
+                return AnimFactory.noneAnim(Animator.class);
+            } else {
+                if (enter) {
+                    // make sure the view attach to window
+                    view.post(() -> animator.get().start());
+                    return AnimFactory.noneAnim(Animator.class);
+                }
+            }
+            return animator.get();
+        }
+        return super.onCreateAnimator(transit, enter, nextAnim);
     }
 
     @Override
@@ -62,6 +89,25 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
     public int getContainerId() {
         return 0;
+    }
+
+    /**
+     * This function support for {@link CircularAnimator} animator.<br/>
+     * You can override to modify the initial position of anim.<br/>
+     * Default center of the view.
+     */
+    @NonNull
+    protected Point onRequestCircularPosition() {
+        Point result = new Point();
+        View view = getView();
+        if (view != null) {
+            int[] positions = new int[2];
+            view.getLocationInWindow(positions);
+            result.x = positions[0] + view.getWidth() / 2;
+            result.y = positions[1] + view.getHeight() / 2;
+        }
+        Log.e("ddd", "onRequestCenterView: " + result);
+        return result;
     }
 
     @Override

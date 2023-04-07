@@ -13,9 +13,9 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface AnimatorStyle {
     // @formatter:off
-    int NONE        = 1 << 31;
-    int SLIDE       = 1 << 30;
-    int CIRCULAR    = 1 << 29;
+    int NONE        = -1 << 31;
+    int SLIDE       = -1 << 30;
+    int CIRCULAR    = -1 << 29;
     // @formatter:on
 
 }

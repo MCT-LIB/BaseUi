@@ -1,58 +1,54 @@
 package com.mct.base.ui.transition.animator;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.view.View;
 
-public class ViewPropertyAnimator extends Animator {
+import androidx.annotation.CallSuper;
 
-    protected final View mView;
-    protected final AnimatorSet mAnimatorSet;
+import java.lang.ref.WeakReference;
+
+public class ViewPropertyAnimator {
+
+    private final WeakReference<View> mTarget;
+    private final AnimatorSet mAnimatorSet;
+    private boolean mIsInit;
 
     public ViewPropertyAnimator(View view) {
-        mView = view;
+        mTarget = new WeakReference<>(view);
         mAnimatorSet = new AnimatorSet();
     }
 
-    @Override
-    public void start() {
-        mAnimatorSet.start();
+    protected final AnimatorSet init() {
+        if (!mIsInit) {
+            initialAnimator(getTarget(), getAnimator());
+        }
+        return getAnimator();
     }
 
-    @Override
-    public void cancel() {
-        mAnimatorSet.cancel();
+    @CallSuper
+    protected void initialAnimator(View target, AnimatorSet animator) {
+        mIsInit = true;
     }
 
-    @Override
-    public long getStartDelay() {
-        return mAnimatorSet.getStartDelay();
+    protected View getTarget() {
+        return mTarget.get();
     }
 
-    @Override
-    public void setStartDelay(long startDelay) {
+    protected AnimatorSet getAnimator() {
+        return mAnimatorSet;
+    }
+
+    protected void setStartDelay(long startDelay) {
         mAnimatorSet.setStartDelay(startDelay);
     }
 
-    @Override
-    public boolean isRunning() {
-        return mAnimatorSet.isRunning();
+    protected void setDuration(long duration) {
+        mAnimatorSet.setDuration(duration);
     }
 
-    public void setInterpolator(TimeInterpolator interpolator) {
+    protected void setInterpolator(TimeInterpolator interpolator) {
         mAnimatorSet.setInterpolator(interpolator);
     }
 
-    @Override
-    public Animator setDuration(long duration) {
-        mAnimatorSet.setDuration(duration);
-        return this;
-    }
-
-    @Override
-    public long getDuration() {
-        return mAnimatorSet.getDuration();
-    }
 }
