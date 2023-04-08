@@ -46,7 +46,7 @@ public class FadeAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(target, "alpha", 1f);
+            ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(target, "alpha", 0f, 1f);
             animator.play(alphaAnimator);
         }
     }
@@ -60,7 +60,7 @@ public class FadeAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(target, "alpha", 0f);
+            ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(target, "alpha", 1f, 0f);
             animator.play(alphaAnimator);
         }
     }
