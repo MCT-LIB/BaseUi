@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Back stack count: "
-            android:textColor="@color/white"
+            android:textColor="@color/purple_500"
             android:textSize="16sp" />
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"
+            android:textColor="@color/purple_500"
             android:textSize="16sp"
             tools:text="1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -33,12 +33,12 @@
         android:id="@+id/edt_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/purple_500"
         android:hint="Enter number"
         android:importantForAutofill="no"
         android:inputType="number"
-        android:textColor="@color/white"
-        android:textColorHint="#BFFFFFFF"
+        android:textColor="@color/purple_500"
+        android:textColorHint="@color/purple_200"
         android:textSize="16sp" />
 
     <Button

@@ -52,15 +52,15 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     @Override
-    public void replaceFragment(Fragment fragment, FragmentTransition transition) {
+    public void replaceFragment(Fragment fragment, @NonNull FragmentTransition transition) {
         performHideSoftInput();
         if (isCurrentFragmentInBackStack()) {
-            popFragment(true);
+            popFragment(transition.couldPopImmediateWhenReplaceFragmentInBackStack());
             replaceFragmentToStack(fragment, transition);
             return;
         }
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        FragmentTransition.apply(transaction, transition);
+        transition.applyTransition(transaction);
         transaction.replace(mContainerId, fragment, fragment.getClass().getName());
         transaction.commit();
     }
@@ -71,10 +71,10 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     @Override
-    public void replaceFragmentToStack(Fragment fragment, FragmentTransition transition) {
+    public void replaceFragmentToStack(Fragment fragment, @NonNull FragmentTransition transition) {
         performHideSoftInput();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        FragmentTransition.apply(transaction, transition);
+        transition.applyTransition(transaction);
         transaction.replace(mContainerId, fragment, fragment.getClass().getName());
         transaction.addToBackStack(fragment.getClass().getName());
         mFragmentIds.add(transaction.commit());
@@ -86,7 +86,7 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     @Override
-    public void replaceAndClearBackStack(Fragment fragment, FragmentTransition transition) {
+    public void replaceAndClearBackStack(Fragment fragment, @NonNull FragmentTransition transition) {
         clearBackStack();
         replaceFragment(fragment, transition);
     }

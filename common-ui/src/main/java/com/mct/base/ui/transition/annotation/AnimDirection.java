@@ -15,11 +15,11 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface AnimDirection {
     // @formatter:off
-    int NONE    = 1;
-    int UP      = 1 << 1;
-    int DOWN    = 1 << 2;
-    int LEFT    = 1 << 3;
-    int RIGHT   = 1 << 4;
+    int NONE    = 0;
+    int UP      = 1;
+    int DOWN    = 2;
+    int LEFT    = 3;
+    int RIGHT   = 4;
     // @formatter:on
 
 }

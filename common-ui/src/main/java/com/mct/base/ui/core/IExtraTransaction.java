@@ -15,15 +15,15 @@ public interface IExtraTransaction {
 
     void replaceFragment(Fragment fragment);
 
-    void replaceFragment(Fragment fragment, FragmentTransition transition);
+    void replaceFragment(Fragment fragment,@NonNull FragmentTransition transition);
 
     void replaceFragmentToStack(Fragment fragment);
 
-    void replaceFragmentToStack(Fragment fragment, FragmentTransition transition);
+    void replaceFragmentToStack(Fragment fragment,@NonNull FragmentTransition transition);
 
     void replaceAndClearBackStack(Fragment fragment);
 
-    void replaceAndClearBackStack(Fragment fragment, FragmentTransition transition);
+    void replaceAndClearBackStack(Fragment fragment,@NonNull FragmentTransition transition);
 
     void clearBackStack();
 

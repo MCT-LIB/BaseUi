@@ -1,11 +1,5 @@
 package com.mct.base.ui.transition;
 
-import static com.mct.base.ui.transition.annotation.AnimBehavior.IN;
-import static com.mct.base.ui.transition.annotation.AnimBehavior.OUT;
-import static com.mct.base.ui.transition.annotation.AnimDirection.DOWN;
-import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
-import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
-import static com.mct.base.ui.transition.annotation.AnimDirection.UP;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.CUBE;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.CUBE_FLIP;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.CUBE_MOVE;
@@ -22,9 +16,7 @@ import static com.mct.base.ui.transition.annotation.AnimationStyle.SIDES;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 
@@ -35,19 +27,48 @@ import com.mct.base.ui.transition.animation.FlipAnimation;
 import com.mct.base.ui.transition.animation.MoveAnimation;
 import com.mct.base.ui.transition.animation.PushPullAnimation;
 import com.mct.base.ui.transition.animation.SidesAnimation;
-import com.mct.base.ui.transition.animator.CircularAnimator;
-import com.mct.base.ui.transition.animator.SlideAnimator;
-import com.mct.base.ui.transition.annotation.AnimBehavior;
-import com.mct.base.ui.transition.annotation.AnimDirection;
+import com.mct.base.ui.transition.animator.CircularRevealAnimator;
+import com.mct.base.ui.transition.animator.FadeAnimator;
+import com.mct.base.ui.transition.animator.MoveAnimator;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
+import com.mct.base.ui.transition.option.AnimOptions;
+import com.mct.base.ui.transition.option.AnimOptionsData;
 
-public abstract class AnimFactory {
+public class FragmentTransitionAnimFactory {
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static <T> T create(@NonNull AnimOptionsData aod, Class<T> clazz) {
+        if (clazz == Animation.class) {
+            return (T) createAnimation(aod);
+        }
+        if (clazz == Animator.class) {
+            return (T) createAnimator(aod);
+        }
+        throw new RuntimeException("Class invalid!");
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static <T> T create(Class<T> clazz) {
+        if (clazz == Animation.class) {
+            return (T) new Animation() {
+            };
+        }
+        if (clazz == Animator.class) {
+            return (T) new AnimatorSet();
+        }
+        throw new RuntimeException("Class invalid!");
+    }
 
     @NonNull
-    public static Animation createAnimation(int nextAnim, boolean enter, int duration) {
-        int style, direction;
-        direction = getDirection(nextAnim);
-        style = getStyle(nextAnim, direction);
+    private static Animation createAnimation(@NonNull AnimOptionsData aod) {
+        AnimOptions options = aod.getOptions();
+        int style = options.getAnimStyle();
+        int direction = options.getAnimDirection();
+        int duration = aod.getDuration();
+        boolean enter = aod.isEnter();
+
         // @formatter:off
         switch (style) {
             case MOVE:      return MoveAnimation.create(direction, enter, duration);
@@ -81,67 +102,32 @@ public abstract class AnimFactory {
                                 : CubeAnimation.create(direction, enter, duration).fading(1.0f, 0.3f);
         }
         // @formatter:on
-        return noneAnim(Animation.class);
+        return create(Animation.class);
     }
 
     @NonNull
-    public static Animator createAnimator(View view, int nextAnim, boolean enter, int duration, Point center) {
-        int style, direction, behavior;
-        direction = getDirection(nextAnim);
-        behavior = getBehavior(nextAnim);
+    private static Animator createAnimator(@NonNull AnimOptionsData aod) {
+        AnimOptions options = aod.getOptions();
+        int style = options.getAnimStyle();
+        int direction = options.getAnimDirection();
+        int behavior = options.getAnimBehavior();
 
-        style = getStyle(nextAnim, direction);
+        View view = aod.getView();
+        int duration = aod.getDuration();
+        boolean enter = aod.isEnter();
+        Point center = aod.getCircularPosition();
 
-        Log.e("ddd", "createAnimator: " + enter + " " + center);
+        // @formatter:off
         switch (style) {
-            case AnimatorStyle.SLIDE:
-                return SlideAnimator.create(view, direction, enter, duration);
-            case AnimatorStyle.CIRCULAR:
-                return CircularAnimator.create(view, behavior, enter, duration, center.x, center.y);
+            case AnimatorStyle.MOVE:            return MoveAnimator.create(view, direction, enter, duration);
+            case AnimatorStyle.FADE:            return FadeAnimator.create(view, behavior, enter,duration);
+            case AnimatorStyle.CIRCULAR_REVEAL: return CircularRevealAnimator.create(view, behavior, enter, duration, center.x, center.y);
         }
-        return noneAnim(Animator.class);
+        // @formatter:on
+        return create(Animator.class);
     }
 
-    @SuppressWarnings("unchecked")
-    @NonNull
-    public static <T> T noneAnim(Class<T> clazz) {
-        if (clazz == Animation.class) {
-            return (T) new Animation() {
-            };
-        }
-        if (clazz == Animator.class) {
-            return (T) new AnimatorSet();
-        }
-        throw new RuntimeException("Class invalid!");
-    }
-
-    private static int getStyle(int nextAnim, int direction) {
-        return nextAnim & ~direction;
-    }
-
-    @AnimDirection
-    private static int getDirection(int nextAnim) {
-        int[] directions = new int[]{UP, DOWN, LEFT, RIGHT};
-        for (int direction : directions) {
-            if ((nextAnim & direction) == direction) {
-                return direction;
-            }
-        }
-        return AnimDirection.NONE;
-    }
-
-    @AnimBehavior
-    private static int getBehavior(int nextAnim) {
-        int[] behaviors = new int[]{IN, OUT};
-        for (int behavior : behaviors) {
-            if ((nextAnim & behavior) == behavior) {
-                return behavior;
-            }
-        }
-        return AnimBehavior.NONE;
-    }
-
-    private AnimFactory() {
+    private FragmentTransitionAnimFactory() {
         //no instance
     }
 }

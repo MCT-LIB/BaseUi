@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 
 import com.mct.base.ui.transition.annotation.AnimDirection;
 
-public class SlideAnimator extends ViewPropertyAnimator {
+public class MoveAnimator extends ViewPropertyAnimator {
 
     protected final @AnimDirection int mDirection;
     protected final boolean mEnter;
@@ -43,7 +43,7 @@ public class SlideAnimator extends ViewPropertyAnimator {
         }
     }
 
-    public SlideAnimator(View view, @AnimDirection int direction, boolean enter, long duration) {
+    public MoveAnimator(View view, @AnimDirection int direction, boolean enter, long duration) {
         super(view);
         mDirection = direction;
         mEnter = enter;
@@ -51,7 +51,7 @@ public class SlideAnimator extends ViewPropertyAnimator {
         setInterpolator(new AccelerateDecelerateInterpolator());
     }
 
-    private static class VerticalMoveAnimation extends SlideAnimator {
+    private static class VerticalMoveAnimation extends MoveAnimator {
 
         public VerticalMoveAnimation(View view, int direction, boolean enter, long duration) {
             super(view, direction, enter, duration);
@@ -67,7 +67,7 @@ public class SlideAnimator extends ViewPropertyAnimator {
         }
     }
 
-    private static class HorizontalMoveAnimation extends SlideAnimator {
+    private static class HorizontalMoveAnimation extends MoveAnimator {
 
         public HorizontalMoveAnimation(View view, int direction, boolean enter, long duration) {
             super(view, direction, enter, duration);

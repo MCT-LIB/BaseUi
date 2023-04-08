@@ -13,9 +13,9 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface AnimBehavior {
     // @formatter:off
-    int NONE    = 1;
-    int IN      = 1 << 1;
-    int OUT     = 1 << 2;
+    int NONE    = 0;
+    int IN      = 1;
+    int OUT     = 2;
     // @formatter:on
 
 }

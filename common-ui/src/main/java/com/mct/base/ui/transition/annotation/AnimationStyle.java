@@ -27,20 +27,20 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface AnimationStyle {
     // @formatter:off
-    int NONE        = -1 << 31;
-    int MOVE        = -1 << 30;
-    int CUBE        = -1 << 29;
-    int FLIP        = -1 << 28;
-    int PUSH_PULL   = -1 << 27;
-    int SIDES       = -1 << 26;
-    int CUBE_MOVE   = -1 << 25;
-    int MOVE_CUBE   = -1 << 24;
-    int PUSH_MOVE   = -1 << 23;
-    int MOVE_PULL   = -1 << 22;
-    int FLIP_MOVE   = -1 << 21;
-    int MOVE_FLIP   = -1 << 20;
-    int FLIP_CUBE   = -1 << 19;
-    int CUBE_FLIP   = -1 << 18;
+    int NONE        = 0;
+    int MOVE        = 1;
+    int CUBE        = 2;
+    int FLIP        = 3;
+    int PUSH_PULL   = 4;
+    int SIDES       = 5;
+    int CUBE_MOVE   = 6;
+    int MOVE_CUBE   = 7;
+    int PUSH_MOVE   = 8;
+    int MOVE_PULL   = 9;
+    int FLIP_MOVE   = 10;
+    int MOVE_FLIP   = 11;
+    int FLIP_CUBE   = 12;
+    int CUBE_FLIP   = 13;
     // @formatter:on
 
 }
