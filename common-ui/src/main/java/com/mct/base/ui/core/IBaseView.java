@@ -6,6 +6,6 @@ public interface IBaseView {
 
     void hideLoading();
 
-    void onError(Throwable t);
+    void showError(Throwable t);
 
 }

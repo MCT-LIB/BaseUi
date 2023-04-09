@@ -139,6 +139,26 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     @Override
+    public IExtraTransaction parentExtraTransaction() {
+        if (getParentFragment() instanceof BaseFragment) {
+            return ((BaseFragment) getParentFragment()).childExtraTransaction();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public IExtraTransaction parentExtraTransaction(Class<? extends BaseFragment> parent) {
+        if (getParentFragment() instanceof BaseFragment) {
+            if (getParentFragment().getClass() == parent) {
+                return ((BaseFragment) getParentFragment()).childExtraTransaction();
+            }
+            return ((BaseFragment) getParentFragment()).parentExtraTransaction(parent);
+        }
+        return null;
+    }
+
+    @Override
     public void post(Runnable runnable) {
         if (mIBaseActivity != null) {
             mIBaseActivity.post(runnable);
@@ -181,15 +201,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     @Override
-    public void onError(Throwable t) {
-    }
-
-    public IExtraTransaction parentExtraTransaction() {
-        if (getParentFragment() instanceof BaseFragment) {
-            return ((BaseFragment) getParentFragment()).childExtraTransaction();
-        } else {
-            return childExtraTransaction();
-        }
+    public void showError(Throwable t) {
     }
 
     private void disableFragmentTouchInDuration(long duration) {
