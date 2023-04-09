@@ -17,7 +17,7 @@ import com.mct.base.ui.transition.annotation.AnimBehavior;
 
 public class CircularRevealAnimator extends ViewPropertyAnimator {
 
-    private static final int OFFSET_DURATION = 350;
+    private static final int OFFSET_DURATION = 200;
     protected final @AnimBehavior int mBehavior;
     protected final boolean mEnter;
     protected final int mCenterX;
@@ -72,7 +72,7 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
             int startRadius = (int) Math.hypot(target.getWidth(), target.getHeight());
             Animator circularReveal = ViewAnimationUtils.createCircularReveal(target, mCenterX, mCenterY, startRadius, 0f);
             animator.play(circularReveal);
-            animator.setInterpolator(new DecelerateInterpolator(1.5f));
+            animator.setInterpolator(new DecelerateInterpolator(1f));
         }
     }
 

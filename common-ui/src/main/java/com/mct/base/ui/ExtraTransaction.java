@@ -53,12 +53,16 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void replaceFragment(Fragment fragment, @NonNull FragmentTransition transition) {
-        performHideSoftInput();
         if (isCurrentFragmentInBackStack()) {
-            popFragment(transition.couldPopImmediateWhenReplaceFragmentInBackStack());
+            popFragment(transition.couldPopImmediate());
             replaceFragmentToStack(fragment, transition);
             return;
         }
+        replaceRootFragment(fragment, transition);
+    }
+
+    private void replaceRootFragment(Fragment fragment, @NonNull FragmentTransition transition) {
+        performHideSoftInput();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transition.applyTransition(transaction);
         transaction.replace(mContainerId, fragment, fragment.getClass().getName());
@@ -87,16 +91,25 @@ class ExtraTransaction implements IExtraTransaction {
 
     @Override
     public void replaceAndClearBackStack(Fragment fragment, @NonNull FragmentTransition transition) {
-        clearBackStack();
-        replaceFragment(fragment, transition);
+        clearBackStack(transition.couldPopImmediate());
+        replaceRootFragment(fragment, transition);
     }
 
     @Override
     public void clearBackStack() {
+        clearBackStack(false);
+    }
+
+    @Override
+    public void clearBackStack(boolean immediate) {
         performHideSoftInput();
         if (getBackStackCount() > 0) {
             mFragmentIds.clear();
-            mFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            if (immediate) {
+                mFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else {
+                mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
         }
     }
 

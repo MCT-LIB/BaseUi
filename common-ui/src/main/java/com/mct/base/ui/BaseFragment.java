@@ -1,14 +1,15 @@
 package com.mct.base.ui;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Supplier;
 import androidx.fragment.app.Fragment;
 
 import com.mct.base.ui.core.IBaseActivity;
@@ -20,6 +21,7 @@ import com.mct.base.ui.transition.FragmentTransitionAnimFactory;
 import com.mct.base.ui.transition.animator.CircularRevealAnimator;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
+import com.mct.base.ui.transition.option.AnimExtras;
 import com.mct.base.ui.transition.option.AnimOptions;
 import com.mct.base.ui.transition.option.AnimOptionsData;
 
@@ -28,18 +30,23 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     private static final int ANIM_DURATION = 300;
     private IBaseActivity mIBaseActivity;
     private IExtraTransaction mIExtraTransaction;
+    private AnimExtras mAnimExtras;
 
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if (nextAnim < 0) {
-            AnimOptionsData aod = new AnimOptionsData();
-            aod.setOptions(AnimOptions.fromOptionsValue(nextAnim));
-            aod.setDuration(getAnimDuration());
-            aod.setEnter(enter);
-            if (aod.getOptions().getAnimType() == AnimType.ANIMATION) {
-                return FragmentTransitionAnimFactory.create(aod, Animation.class);
+            AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
+            AnimOptionsData aod = onRequestAnimOptionsData(options, enter);
+            mAnimExtras = FragmentTransitionAnimFactory.create(aod);
+        } else {
+            mAnimExtras = FragmentTransitionAnimFactory.create(getContext(), transit, enter, nextAnim);
+        }
+        if (mAnimExtras.animation != null) {
+            if (enter && onDisableTouchEventWhenAnimRunning()) {
+                disableFragmentTouchInDuration(mAnimExtras.animation.getDuration());
             }
+            return mAnimExtras.animation;
         }
         return super.onCreateAnimation(transit, enter, nextAnim);
     }
@@ -48,32 +55,17 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Override
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
         if (nextAnim < 0) {
-            AnimOptionsData aod = new AnimOptionsData();
-            aod.setOptions(AnimOptions.fromOptionsValue(nextAnim));
-            aod.setDuration(getAnimDuration());
-            aod.setEnter(enter);
-            if (aod.getOptions().getAnimType() == AnimType.ANIMATOR) {
-                View view = getView();
-                Supplier<Animator> animator = () -> {
-                    aod.setView(view);
-                    if (aod.getOptions().getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
-                        aod.setCircularPosition(onRequestCircularPosition());
-                    }
-                    return FragmentTransitionAnimFactory.create(aod, Animator.class);
-                };
-                if (view == null) {
-                    return FragmentTransitionAnimFactory.create(Animator.class);
-                } else {
-                    if (enter) {
-                        // make sure the view attach to window
-                        view.post(() -> animator.get().start());
-                        return FragmentTransitionAnimFactory.create(Animator.class);
-                    }
-                    return animator.get();
-                }
-            }
+            AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
+            if (enter) getView().post(() -> {
+                AnimOptionsData aod = onRequestAnimOptionsData(options, enter);
+                mAnimExtras = FragmentTransitionAnimFactory.create(aod);
+                mAnimExtras.animator.start();
+            });
         }
-        return super.onCreateAnimator(transit, enter, nextAnim);
+        if (enter && onDisableTouchEventWhenAnimRunning()) {
+            disableFragmentTouchInDuration(mAnimExtras.animator.getDuration());
+        }
+        return mAnimExtras.animator;
     }
 
     @Override
@@ -89,6 +81,20 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
     public int getContainerId() {
         return 0;
+    }
+
+    protected AnimOptionsData onRequestAnimOptionsData(AnimOptions options, boolean enter) {
+        AnimOptionsData aod = new AnimOptionsData();
+        aod.setOptions(options);
+        aod.setDuration(onRequestAnimDuration());
+        aod.setEnter(enter);
+        if (options.getAnimType() == AnimType.ANIMATOR) {
+            aod.setView(getView());
+            if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
+                aod.setCircularPosition(onRequestCircularPosition());
+            }
+        }
+        return aod;
     }
 
     /**
@@ -109,8 +115,12 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         return result;
     }
 
-    protected int getAnimDuration() {
+    protected int onRequestAnimDuration() {
         return ANIM_DURATION;
+    }
+
+    protected boolean onDisableTouchEventWhenAnimRunning() {
+        return true;
     }
 
     @Override
@@ -136,9 +146,9 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     @Override
-    public void postDelay(Runnable runnable, long delay) {
+    public void postDelayed(Runnable runnable, long delay) {
         if (mIBaseActivity != null) {
-            mIBaseActivity.postDelay(runnable, delay);
+            mIBaseActivity.postDelayed(runnable, delay);
         }
     }
 
@@ -181,4 +191,33 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
             return childExtraTransaction();
         }
     }
+
+    private void disableFragmentTouchInDuration(long duration) {
+        setFragmentTouch(true);
+        postDelayed(() -> setFragmentTouch(false), duration);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setFragmentTouch(boolean disable) {
+        String tag = "overlayTagView";
+        if (getView() != null && getView().getParent() instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) getView().getParent();
+            View overlay = parent.findViewWithTag(tag);
+            if (disable) {
+                if (overlay == null) {
+                    overlay = new View(getContext());
+                    overlay.setTag(tag);
+                    parent.addView(overlay, new ViewGroup.LayoutParams(-1, -1));
+                }
+                overlay.setElevation(Float.MAX_VALUE);
+                overlay.setOnTouchListener((v, event) -> true);
+            } else {
+                if (overlay != null) {
+                    overlay.setOnTouchListener(null);
+                    parent.removeView(overlay);
+                }
+            }
+        }
+    }
+
 }

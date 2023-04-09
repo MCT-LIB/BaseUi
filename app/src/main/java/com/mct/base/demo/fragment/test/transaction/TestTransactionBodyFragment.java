@@ -11,13 +11,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.mct.base.demo.R;
 import com.mct.base.demo.utils.Utils;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
+import com.mct.base.ui.transition.annotation.AnimDirection;
+import com.mct.base.ui.transition.annotation.AnimationStyle;
 
 public class TestTransactionBodyFragment extends BaseFragment implements View.OnClickListener {
 
@@ -54,19 +55,25 @@ public class TestTransactionBodyFragment extends BaseFragment implements View.On
             case R.id.btn_replaceFragment:
                 extraTransaction.replaceFragment(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        FragmentTransitionFactory.createCircularAnimator()
                 );
                 break;
             case R.id.btn_replaceFragmentToStack:
                 extraTransaction.replaceFragmentToStack(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        FragmentTransitionFactory.createAnimation(
+                                AnimationStyle.CUBE, AnimDirection.LEFT,
+                                AnimationStyle.CUBE, AnimDirection.RIGHT
+                        )
                 );
                 break;
             case R.id.btn_replaceAndClearBackStack:
                 extraTransaction.replaceAndClearBackStack(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        FragmentTransitionFactory.createAnimation(
+                                AnimationStyle.CUBE, AnimDirection.UP,
+                                AnimationStyle.CUBE, AnimDirection.RIGHT
+                        )
                 );
                 break;
             case R.id.btn_clearBackStack:

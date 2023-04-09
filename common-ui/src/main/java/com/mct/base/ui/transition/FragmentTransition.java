@@ -5,10 +5,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 public interface FragmentTransition {
 
-    //
     void applyTransition(@NonNull FragmentTransaction transaction);
 
-    default boolean couldPopImmediateWhenReplaceFragmentInBackStack() {
+    /**
+     * a function to manage the transition when (pop and replace) fragment
+     */
+    default boolean couldPopImmediate() {
         return true;
     }
 

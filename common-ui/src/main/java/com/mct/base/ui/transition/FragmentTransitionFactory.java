@@ -203,13 +203,13 @@ public abstract class FragmentTransitionFactory {
         }
 
         @Override
-        public boolean couldPopImmediateWhenReplaceFragmentInBackStack() {
+        public boolean couldPopImmediate() {
             AnimOptions options = AnimOptions.fromOptionsValue(enter);
             // do not pop immediate when style is CIRCULAR_REVEAL
             if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
                 return false;
             }
-            return FragmentTransition.super.couldPopImmediateWhenReplaceFragmentInBackStack();
+            return FragmentTransition.super.couldPopImmediate();
         }
 
         public static class Builder {
@@ -258,6 +258,11 @@ public abstract class FragmentTransitionFactory {
         @Override
         public void applyTransition(@NonNull FragmentTransaction transaction) {
             transaction.setTransition(transit);
+        }
+
+        @Override
+        public boolean couldPopImmediate() {
+            return false;
         }
     }
 }

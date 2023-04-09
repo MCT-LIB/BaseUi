@@ -15,12 +15,19 @@ import static com.mct.base.ui.transition.annotation.AnimationStyle.PUSH_PULL;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.SIDES;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.R;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.mct.base.ui.transition.animation.CubeAnimation;
 import com.mct.base.ui.transition.animation.FlipAnimation;
@@ -30,36 +37,54 @@ import com.mct.base.ui.transition.animation.SidesAnimation;
 import com.mct.base.ui.transition.animator.CircularRevealAnimator;
 import com.mct.base.ui.transition.animator.FadeAnimator;
 import com.mct.base.ui.transition.animator.MoveAnimator;
+import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
+import com.mct.base.ui.transition.option.AnimExtras;
 import com.mct.base.ui.transition.option.AnimOptions;
 import com.mct.base.ui.transition.option.AnimOptionsData;
 
 public class FragmentTransitionAnimFactory {
 
-    @SuppressWarnings("unchecked")
     @NonNull
-    public static <T> T create(@NonNull AnimOptionsData aod, Class<T> clazz) {
-        if (clazz == Animation.class) {
-            return (T) createAnimation(aod);
+    public static AnimExtras create(@NonNull AnimOptionsData aod) {
+        if (aod.getOptions().getAnimType() == AnimType.ANIMATION) {
+            return new AnimExtras(createAnimation(aod));
         }
-        if (clazz == Animator.class) {
-            return (T) createAnimator(aod);
+        if (aod.getOptions().getAnimType() == AnimType.ANIMATOR) {
+            return new AnimExtras(createAnimator(aod));
         }
-        throw new RuntimeException("Class invalid!");
+        return create(AnimExtras.class);
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
-    public static <T> T create(Class<T> clazz) {
-        if (clazz == Animation.class) {
-            return (T) new Animation() {
-            };
+    public static AnimExtras create(Context context, int transit, boolean enter, int nextAnim) {
+        if (nextAnim == 0 && transit != 0) {
+            nextAnim = transitToAnimResourceId(transit, enter);
         }
-        if (clazz == Animator.class) {
-            return (T) new AnimatorSet();
+        if (nextAnim != 0) {
+            try {
+                String dir = context.getResources().getResourceTypeName(nextAnim);
+                if ("anim".equals(dir)) {
+                    Animation animation = AnimationUtils.loadAnimation(context, nextAnim);
+                    if (animation != null) {
+                        return new AnimExtras(animation);
+                    }
+                }
+                if ("animator".equals(dir)) {
+                    Animator animator = AnimatorInflater.loadAnimator(context, nextAnim);
+                    if (animator != null) {
+                        return new AnimExtras(animator);
+                    }
+                }
+            } catch (Resources.NotFoundException e) {
+                // handle resource not found error
+            } catch (Exception e) {
+                // handle other exceptions
+            }
         }
-        throw new RuntimeException("Class invalid!");
+        return create(AnimExtras.class);
     }
+
 
     @NonNull
     private static Animation createAnimation(@NonNull AnimOptionsData aod) {
@@ -125,6 +150,39 @@ public class FragmentTransitionAnimFactory {
         }
         // @formatter:on
         return create(Animator.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    private static <T> T create(Class<T> clazz) {
+        if (clazz == Animation.class) {
+            return (T) new Animation() {
+            };
+        }
+        if (clazz == Animator.class) {
+            return (T) new AnimatorSet();
+        }
+        if (clazz == AnimExtras.class) {
+            return (T) new AnimExtras(new AnimatorSet());
+        }
+        throw new RuntimeException("Class invalid!");
+    }
+
+    @SuppressLint("PrivateResource")
+    private static int transitToAnimResourceId(int transit, boolean enter) {
+        int animAttr = -1;
+        switch (transit) {
+            case FragmentTransaction.TRANSIT_FRAGMENT_OPEN:
+                animAttr = enter ? R.animator.fragment_open_enter : R.animator.fragment_open_exit;
+                break;
+            case FragmentTransaction.TRANSIT_FRAGMENT_CLOSE:
+                animAttr = enter ? R.animator.fragment_close_enter : R.animator.fragment_close_exit;
+                break;
+            case FragmentTransaction.TRANSIT_FRAGMENT_FADE:
+                animAttr = enter ? R.animator.fragment_fade_enter : R.animator.fragment_fade_exit;
+                break;
+        }
+        return animAttr;
     }
 
     private FragmentTransitionAnimFactory() {

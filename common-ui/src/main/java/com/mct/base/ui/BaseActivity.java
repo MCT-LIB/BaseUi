@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (extraTransaction().getBackStackCount() == 0) {
             if (!mIsBackPressed && showToastOnBackPressed()) {
                 mIsBackPressed = true;
-                postDelay(() -> mIsBackPressed = false, 3000);
+                postDelayed(() -> mIsBackPressed = false, 3000);
                 return;
             }
         } else {
@@ -93,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mHandler.post(runnable);
     }
 
-    protected void postDelay(Runnable runnable, long delay) {
+    protected void postDelayed(Runnable runnable, long delay) {
         mHandler.postDelayed(runnable, delay);
     }
 
@@ -149,7 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             };
         }
         removeCallbacks(hideSoftInputRunnable);
-        postDelay(hideSoftInputRunnable, 200);
+        postDelayed(hideSoftInputRunnable, 200);
     }
 
     protected boolean isSoftInputVisible() {
@@ -209,8 +209,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         @Override
-        public void postDelay(Runnable runnable, long delay) {
-            BaseActivity.this.postDelay(runnable, delay);
+        public void postDelayed(Runnable runnable, long delay) {
+            BaseActivity.this.postDelayed(runnable, delay);
         }
 
         @Override
