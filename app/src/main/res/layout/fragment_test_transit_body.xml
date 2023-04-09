@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:paddingHorizontal="32dp"
-    android:paddingVertical="8dp"
-    tools:context=".MainActivity">
+    android:paddingVertical="8dp">
 
     <Button
-        android:id="@+id/btn_test_backstack"
+        android:id="@+id/btn_transitOpen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test Backstack" />
+        android:text="Transit Open"
+        android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_test_animation"
+        android:id="@+id/btn_transitClose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test Animation" />
+        android:text="Transit Close"
+        android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_test_dialog"
+        android:id="@+id/btn_transitFade"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test Dialog" />
+        android:text="Transit Fade"
+        android:textAllCaps="false" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

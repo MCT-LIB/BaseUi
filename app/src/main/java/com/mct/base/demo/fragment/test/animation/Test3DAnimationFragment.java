@@ -14,7 +14,7 @@ import com.mct.base.demo.R;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
 
-public class TestAnimationFragment extends BaseFragment {
+public class Test3DAnimationFragment extends BaseFragment {
 
     @AnimationStyle
     static int sAnimationStyle = AnimationStyle.NONE;
@@ -23,7 +23,7 @@ public class TestAnimationFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_test_animation, container, false);
+        return inflater.inflate(R.layout.fragment_test_3d_animation, container, false);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -91,10 +91,10 @@ public class TestAnimationFragment extends BaseFragment {
                     sAnimationStyleName = "CUBEFLIP";
                     break;
             }
-            childExtraTransaction().replaceFragment(new TestAnimationBodyFragment());
+            childExtraTransaction().replaceFragment(new Test3DAnimationBodyFragment());
             return true;
         });
-        childExtraTransaction().replaceFragment(new TestAnimationBodyFragment());
+        childExtraTransaction().replaceFragment(new Test3DAnimationBodyFragment());
     }
 
     @Override

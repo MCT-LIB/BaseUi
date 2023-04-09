@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="32dp"
     android:paddingVertical="8dp"
-    tools:background="#64B5F6">
+    tools:background="#B3E5FC">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

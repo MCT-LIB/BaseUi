@@ -1,23 +1,17 @@
 package com.mct.base.demo.fragment;
 
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.mct.base.demo.R;
-import com.mct.base.demo.fragment.test.animation.TestAnimationFragment;
+import com.mct.base.demo.fragment.test.animation.Test3DAnimationFragment;
+import com.mct.base.demo.fragment.test.animation.TestAnimFragment;
 import com.mct.base.demo.fragment.test.dialog.TestDialogFragment;
 import com.mct.base.demo.fragment.test.transaction.TestTransactionFragment;
 import com.mct.base.demo.utils.Utils;
@@ -38,7 +32,7 @@ public class MainFragment extends BaseFragment {
                 FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE))
         );
         view.findViewById(R.id.btn_test_animation).setOnClickListener(v -> extraTransaction().replaceFragmentToStack(
-                new TestAnimationFragment(),
+                new TestAnimFragment(),
                 FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE))
         );
         view.findViewById(R.id.btn_test_dialog).setOnClickListener(v -> extraTransaction().replaceFragmentToStack(

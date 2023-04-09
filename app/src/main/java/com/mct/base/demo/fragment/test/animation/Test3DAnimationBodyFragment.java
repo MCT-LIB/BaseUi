@@ -18,14 +18,14 @@ import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
 import com.mct.base.ui.transition.annotation.AnimDirection;
 
-public class TestAnimationBodyFragment extends BaseFragment implements View.OnClickListener {
+public class Test3DAnimationBodyFragment extends BaseFragment implements View.OnClickListener {
 
     private final int color = Utils.generateBrightColor();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_test_animation_body, container, false);
+        return inflater.inflate(R.layout.fragment_test_3d_animation_body, container, false);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class TestAnimationBodyFragment extends BaseFragment implements View.OnCl
         view.setBackgroundColor(color);
 
         TextView tvStyle = view.findViewById(R.id.tv_AnimationStyle);
-        tvStyle.setText(TestAnimationFragment.sAnimationStyleName);
+        tvStyle.setText(Test3DAnimationFragment.sAnimationStyleName);
 
         view.findViewById(R.id.btn_Left).setOnClickListener(this);
         view.findViewById(R.id.btn_Right).setOnClickListener(this);
@@ -65,8 +65,8 @@ public class TestAnimationBodyFragment extends BaseFragment implements View.OnCl
                 break;
         }
         extraTransaction.replaceFragment(
-                new TestAnimationBodyFragment(),
-                FragmentTransitionFactory.createAnimation(TestAnimationFragment.sAnimationStyle, direction)
+                new Test3DAnimationBodyFragment(),
+                FragmentTransitionFactory.createAnimation(Test3DAnimationFragment.sAnimationStyle, direction)
         );
     }
 

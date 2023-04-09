@@ -11,16 +11,13 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?colorPrimary"
         app:contentInsetStartWithNavigation="0dp"
-        app:menu="@menu/menu_test_animation"
         app:navigationIcon="@drawable/ic_back"
-        app:title="Test Animation"
+        app:title="Test Transit Anim"
         app:titleTextColor="@color/white" />
 
     <FrameLayout
         android:id="@+id/test_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="64dp" />
+        android:layout_height="match_parent" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
