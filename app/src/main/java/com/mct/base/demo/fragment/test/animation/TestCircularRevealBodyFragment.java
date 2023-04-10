@@ -70,14 +70,8 @@ public class TestCircularRevealBodyFragment extends BaseFragment implements View
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(@NonNull View v) {
-        int[] location = new int[2];
-        int[] offset = new int[2];
-        v.getLocationInWindow(location);
-        getView().getLocationInWindow(offset);
-        int viewX = location[0] - offset[0];
-        int viewY = location[1] - offset[1];
-        int x = viewX + v.getWidth() / 2;
-        int y = viewY + v.getHeight() / 2;
+        int x = (int) (v.getX() + v.getWidth() / 2);
+        int y = (int) (v.getY() + v.getHeight() / 2);
         Point point = new Point(x, y);
         parentExtraTransaction().replaceFragmentToStack(
                 TestCircularRevealBodyFragment.newInstance(point),
