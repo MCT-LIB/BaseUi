@@ -22,13 +22,13 @@ public class MoveAnimator extends ViewPropertyAnimator {
     protected final boolean mEnter;
 
     /**
-     * Create new Animation.
+     * Create new Animator.
      *
-     * @param view      Target of animation
-     * @param direction Direction of animation
+     * @param view      Target of animator
+     * @param direction Direction of animator
      * @param enter     true for Enter / false for Exit
-     * @param duration  Duration of Animation
-     * @return SidesAnimation
+     * @param duration  Duration of animator
+     * @return MoveAnimator
      */
     public static @NonNull Animator create(View view, @AnimDirection int direction, boolean enter, long duration) {
         switch (direction) {

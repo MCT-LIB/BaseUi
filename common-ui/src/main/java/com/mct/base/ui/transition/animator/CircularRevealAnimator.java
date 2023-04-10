@@ -23,6 +23,15 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
     protected final int mCenterX;
     protected final int mCenterY;
 
+    /**
+     * Create new Animator.
+     *
+     * @param view     Target of animator
+     * @param behavior Behavior of animator
+     * @param enter    true for Enter / false for Exit
+     * @param duration Duration of animator
+     * @return FadeAnimator
+     */
     @NonNull
     public static Animator create(View view, @AnimBehavior int behavior, boolean enter, int duration, int centerX, int centerY) {
         switch (behavior) {

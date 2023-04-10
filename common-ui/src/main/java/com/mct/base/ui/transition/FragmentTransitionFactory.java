@@ -20,15 +20,7 @@ public abstract class FragmentTransitionFactory {
 
     @NonNull
     public static FragmentTransition createDefaultTransition() {
-        return new CustomFragmentTransition();
-    }
-
-    @NonNull
-    public static FragmentTransition createDefaultFadeTransition() {
-        return createTransition(
-                android.R.anim.fade_in, android.R.anim.fade_out,
-                android.R.anim.fade_in, android.R.anim.fade_out
-        );
+        return new CustomFragmentTransition.Builder().build();
     }
 
     @NonNull
@@ -41,7 +33,10 @@ public abstract class FragmentTransitionFactory {
                                                       @AnimRes @AnimatorRes int exit,
                                                       @AnimRes @AnimatorRes int popEnter,
                                                       @AnimRes @AnimatorRes int popExit) {
-        return new CustomFragmentTransition(enter, exit, popEnter, popExit);
+        return create(
+                new AnimOptionsOrAnim(enter), new AnimOptionsOrAnim(exit),
+                new AnimOptionsOrAnim(popEnter), new AnimOptionsOrAnim(popExit)
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -123,13 +118,13 @@ public abstract class FragmentTransitionFactory {
 
     @NonNull
     public static FragmentTransition createCircularAnimator(@AnimBehavior int behavior, @AnimBehavior int popBehavior) {
-        int type = AnimType.ANIMATOR;
-        int style = AnimatorStyle.CIRCULAR_REVEAL;
+        AnimOptions.Builder circularReveal = createOptions(AnimType.ANIMATOR, AnimatorStyle.CIRCULAR_REVEAL);
+        AnimOptions.Builder fadeOptions = createOptions(AnimType.ANIMATOR, AnimatorStyle.FADE);
 
-        AnimOptionsOrAnim enter = new AnimOptionsOrAnim(createOptions(type, style).animBehavior(behavior).build());
-        AnimOptionsOrAnim exit = null;
-        AnimOptionsOrAnim popEnter = null;
-        AnimOptionsOrAnim popExit = new AnimOptionsOrAnim(createOptions(type, style).animBehavior(popBehavior).build());
+        AnimOptionsOrAnim enter = new AnimOptionsOrAnim(circularReveal.animBehavior(behavior).build());
+        AnimOptionsOrAnim exit = new AnimOptionsOrAnim(fadeOptions.animBehavior(AnimBehavior.OUT).build());
+        AnimOptionsOrAnim popEnter = new AnimOptionsOrAnim(fadeOptions.animBehavior(AnimBehavior.IN).build());
+        AnimOptionsOrAnim popExit = new AnimOptionsOrAnim(circularReveal.animBehavior(popBehavior).build());
 
         return create(enter, exit, popEnter, popExit);
     }
@@ -182,19 +177,16 @@ public abstract class FragmentTransitionFactory {
 
     private static class CustomFragmentTransition implements FragmentTransition {
 
-        private int enter;
-        private int exit;
-        private int popEnter;
-        private int popExit;
+        private final int enter;
+        private final int exit;
+        private final int popEnter;
+        private final int popExit;
 
-        public CustomFragmentTransition() {
-        }
-
-        public CustomFragmentTransition(int enter, int exit, int popEnter, int popExit) {
-            this.enter = enter;
-            this.exit = exit;
-            this.popEnter = popEnter;
-            this.popExit = popExit;
+        private CustomFragmentTransition(@NonNull Builder builder) {
+            this.enter = builder.enter;
+            this.exit = builder.exit;
+            this.popEnter = builder.popEnter;
+            this.popExit = builder.popExit;
         }
 
         @Override
@@ -216,7 +208,6 @@ public abstract class FragmentTransitionFactory {
             private int enter;
             private int exit;
             private int popEnter;
-
             private int popExit;
 
             public Builder enter(AnimOptionsOrAnim options) {
@@ -240,7 +231,7 @@ public abstract class FragmentTransitionFactory {
             }
 
             public CustomFragmentTransition build() {
-                return new CustomFragmentTransition(enter, exit, popEnter, popExit);
+                return new CustomFragmentTransition(this);
             }
 
         }

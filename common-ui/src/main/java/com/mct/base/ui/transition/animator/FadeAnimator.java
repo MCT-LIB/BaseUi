@@ -18,6 +18,15 @@ public class FadeAnimator extends ViewPropertyAnimator {
     protected final @AnimBehavior int mBehavior;
     protected final boolean mEnter;
 
+    /**
+     * Create new Animator.
+     *
+     * @param view     Target of animator
+     * @param behavior Behavior of animator
+     * @param enter    true for Enter / false for Exit
+     * @param duration Duration of animator
+     * @return FadeAnimator
+     */
     @NonNull
     public static Animator create(View view, @AnimBehavior int behavior, boolean enter, long duration) {
         switch (behavior) {
