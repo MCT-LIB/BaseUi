@@ -103,11 +103,11 @@ public abstract class FragmentTransitionFactory {
     @NonNull
     public static FragmentTransition createCircularAnimator() {
         AnimOptions circularReveal = createOptions(AnimType.ANIMATOR, AnimatorStyle.CIRCULAR_REVEAL).build();
-        AnimOptions fade = createOptions(AnimType.ANIMATOR, AnimatorStyle.FADE).build();
+        AnimOptions none = createOptions(AnimType.ANIMATOR, AnimatorStyle.NONE).build();
 
         AnimOptionsOrAnim enter = new AnimOptionsOrAnim(circularReveal);
-        AnimOptionsOrAnim exit = new AnimOptionsOrAnim(fade);
-        AnimOptionsOrAnim popEnter = new AnimOptionsOrAnim(fade);
+        AnimOptionsOrAnim exit = new AnimOptionsOrAnim(none);
+        AnimOptionsOrAnim popEnter = new AnimOptionsOrAnim(none);
         AnimOptionsOrAnim popExit = new AnimOptionsOrAnim(circularReveal);
 
         return create(enter, exit, popEnter, popExit);

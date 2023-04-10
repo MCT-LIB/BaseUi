@@ -92,4 +92,9 @@ public class TestCircularRevealBodyFragment extends BaseFragment implements View
         }
         return super.onRequestCircularPosition();
     }
+
+    @Override
+    protected int onRequestAnimDuration() {
+        return 400;
+    }
 }

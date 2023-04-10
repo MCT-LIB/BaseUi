@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 
 public class CircularRevealAnimator extends ViewPropertyAnimator {
 
-    private static final int OFFSET_DURATION = 200;
     protected final boolean mEnter;
     protected final int mCenterX;
     protected final int mCenterY;
@@ -38,7 +37,7 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
         this.mEnter = enter;
         this.mCenterX = centerX;
         this.mCenterY = centerY;
-        setDuration(duration + OFFSET_DURATION);
+        setDuration(duration);
     }
 
     private static class CircularRevealInAnimator extends CircularRevealAnimator {

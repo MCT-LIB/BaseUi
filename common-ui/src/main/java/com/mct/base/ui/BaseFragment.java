@@ -47,9 +47,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if (nextAnim < 0) {
-            AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
-            AnimOptionsData aod = onRequestAnimOptionsData(options, enter);
-            mAnimExtras = FragmentTransitionAnimFactory.create(aod);
+            mAnimExtras = FragmentTransitionAnimFactory.create(onRequestAnimOptionsData(nextAnim, enter));
         } else {
             mAnimExtras = FragmentTransitionAnimFactory.create(getContext(), transit, enter, nextAnim);
         }
@@ -69,7 +67,8 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         return 0;
     }
 
-    protected AnimOptionsData onRequestAnimOptionsData(AnimOptions options, boolean enter) {
+    protected AnimOptionsData onRequestAnimOptionsData(int nextAnim, boolean enter) {
+        AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
         AnimOptionsData aod = new AnimOptionsData();
         aod.setOptions(options);
         aod.setDuration(onRequestAnimDuration());
@@ -81,6 +80,10 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
             }
             aod.setView(view);
             if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
+                // make the view on the top of container when running animation
+                final float lastElevation = view.getElevation();
+                view.setElevation(Integer.MAX_VALUE);
+                view.postDelayed(() -> view.setElevation(lastElevation), aod.getDuration());
                 aod.setCircularPosition(onRequestCircularPosition());
             }
         }
