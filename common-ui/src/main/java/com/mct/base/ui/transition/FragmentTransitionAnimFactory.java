@@ -37,6 +37,7 @@ import com.mct.base.ui.transition.animation.SidesAnimation;
 import com.mct.base.ui.transition.animator.CircularRevealAnimator;
 import com.mct.base.ui.transition.animator.FadeAnimator;
 import com.mct.base.ui.transition.animator.MoveAnimator;
+import com.mct.base.ui.transition.animator.RotateAnimator;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
 import com.mct.base.ui.transition.option.AnimExtras;
@@ -145,6 +146,9 @@ public class FragmentTransitionAnimFactory {
             case AnimatorStyle.MOVE:            return MoveAnimator.create(view, direction, enter, duration);
             case AnimatorStyle.FADE:            return FadeAnimator.create(view, enter, duration);
             case AnimatorStyle.CIRCULAR_REVEAL: return CircularRevealAnimator.create(view, enter, duration, center.x, center.y);
+            case AnimatorStyle.ROTATE:          return RotateAnimator.create(view, direction, enter,duration);
+            case AnimatorStyle.ROTATE_UP:       return RotateAnimator.createRotateUp(view, direction, enter,duration);
+            case AnimatorStyle.ROTATE_DOWN:     return RotateAnimator.createRotateDown(view, direction, enter,duration);
         }
         // @formatter:on
         return create(Animator.class);
@@ -152,7 +156,7 @@ public class FragmentTransitionAnimFactory {
 
     @SuppressWarnings("unchecked")
     @NonNull
-    private static <T> T create(Class<T> clazz) {
+    public static <T> T create(Class<T> clazz) {
         if (clazz == Animation.class) {
             return (T) new Animation() {
             };

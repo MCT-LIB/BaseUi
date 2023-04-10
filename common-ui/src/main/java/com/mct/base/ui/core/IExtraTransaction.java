@@ -7,6 +7,8 @@ import com.mct.base.ui.transition.FragmentTransition;
 
 public interface IExtraTransaction {
 
+    int getContainerId();
+
     int getBackStackCount();
 
     Fragment getCurrentFragment();

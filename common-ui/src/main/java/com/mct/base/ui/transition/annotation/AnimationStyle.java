@@ -20,9 +20,6 @@ import androidx.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * Note: new AnimationStyle define value will < -1 << 4 {@link AnimDirection#RIGHT}
- */
 @IntDef({NONE, MOVE, CUBE, FLIP, PUSH_PULL, SIDES, CUBE_MOVE, MOVE_CUBE, PUSH_MOVE, MOVE_PULL, FLIP_MOVE, MOVE_FLIP, FLIP_CUBE, CUBE_FLIP})
 @Retention(RetentionPolicy.SOURCE)
 public @interface AnimationStyle {

@@ -32,6 +32,17 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     private IExtraTransaction mIExtraTransaction;
     private AnimExtras mAnimExtras;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof BaseActivity) {
+            mIBaseActivity = ((BaseActivity) context).getBaseActivity();
+            mIExtraTransaction = new ExtraTransaction(getContainerId(), getChildFragmentManager(), mIBaseActivity.keyboardManager());
+        } else {
+            throw new RuntimeException("The activity must extends BaseActivity!");
+        }
+    }
+
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -56,27 +67,13 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
         if (nextAnim < 0) {
             AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
-            if (enter) getView().post(() -> {
-                AnimOptionsData aod = onRequestAnimOptionsData(options, enter);
-                mAnimExtras = FragmentTransitionAnimFactory.create(aod);
-                mAnimExtras.animator.start();
-            });
+            AnimOptionsData aod = onRequestAnimOptionsData(options, enter);
+            mAnimExtras = FragmentTransitionAnimFactory.create(aod);
         }
         if (enter && onDisableTouchEventWhenAnimRunning()) {
             disableFragmentTouchInDuration(mAnimExtras.animator.getDuration());
         }
         return mAnimExtras.animator;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof BaseActivity) {
-            mIBaseActivity = ((BaseActivity) context).getBaseActivity();
-            mIExtraTransaction = new ExtraTransaction(getContainerId(), getChildFragmentManager(), mIBaseActivity.keyboardManager());
-        } else {
-            throw new RuntimeException("The activity must extends BaseActivity!");
-        }
     }
 
     public int getContainerId() {
@@ -105,7 +102,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @NonNull
     protected Point onRequestCircularPosition() {
         Point result = new Point();
-        View view = getView();
+        View view = getParentView();
         if (view != null) {
             int[] positions = new int[2];
             view.getLocationInWindow(positions);
@@ -154,6 +151,20 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
                 return ((BaseFragment) getParentFragment()).childExtraTransaction();
             }
             return ((BaseFragment) getParentFragment()).parentExtraTransaction(parent);
+        }
+        return null;
+    }
+
+    @Override
+    public View getParentView() {
+        if (getView() != null && getView().getParent() instanceof ViewGroup) {
+            return (View) getView().getParent();
+        }
+        if (getParentFragment() != null) {
+            return getParentFragment().getView();
+        }
+        if (getActivity() != null) {
+            return getActivity().findViewById(extraTransaction().getContainerId());
         }
         return null;
     }

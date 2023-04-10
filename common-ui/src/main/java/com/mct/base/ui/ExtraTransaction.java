@@ -27,6 +27,11 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     @Override
+    public int getContainerId() {
+        return mContainerId;
+    }
+
+    @Override
     public int getBackStackCount() {
         return mFragmentManager.getBackStackEntryCount();
     }

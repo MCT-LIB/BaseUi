@@ -10,6 +10,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
@@ -60,10 +61,36 @@ public class MoveAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            int value = target.getHeight();
-            animator.play(mDirection == UP
-                    ? ObjectAnimator.ofFloat(target, "translationY", mEnter ? value : -value)
-                    : ObjectAnimator.ofFloat(target, "translationY", mEnter ? -value : value));
+            if (mDirection == UP) {
+                if (mEnter) {
+                    ViewGroup parent = (ViewGroup) target.getParent();
+                    int distance = parent.getHeight() - target.getTop();
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
+                            ObjectAnimator.ofFloat(target, "translationY", distance, 0)
+                    );
+                } else {
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
+                            ObjectAnimator.ofFloat(target, "translationY", 0, -target.getBottom())
+                    );
+                }
+            } else {
+                if (mEnter) {
+                    int distance = target.getTop() + target.getHeight();
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
+                            ObjectAnimator.ofFloat(target, "translationY", -distance, 0)
+                    );
+                } else {
+                    ViewGroup parent = (ViewGroup) target.getParent();
+                    int distance = parent.getHeight() - target.getTop();
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
+                            ObjectAnimator.ofFloat(target, "translationY", 0, distance)
+                    );
+                }
+            }
         }
     }
 
@@ -76,10 +103,33 @@ public class MoveAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            int value = target.getWidth();
-            animator.play(mDirection == LEFT
-                    ? ObjectAnimator.ofFloat(target, "translationX", mEnter ? value : -value)
-                    : ObjectAnimator.ofFloat(target, "translationX", mEnter ? -value : value));
+            ViewGroup parent = (ViewGroup) target.getParent();
+            int distance = parent.getWidth() - target.getLeft();
+            if (mDirection == LEFT) {
+                if (mEnter) {
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
+                            ObjectAnimator.ofFloat(target, "translationX", -distance, 0)
+                    );
+                } else {
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
+                            ObjectAnimator.ofFloat(target, "translationX", 0, distance)
+                    );
+                }
+            } else {
+                if (mEnter) {
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
+                            ObjectAnimator.ofFloat(target, "translationX", distance, 0)
+                    );
+                } else {
+                    animator.playTogether(
+                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
+                            ObjectAnimator.ofFloat(target, "translationX", 0, -distance)
+                    );
+                }
+            }
         }
     }
 

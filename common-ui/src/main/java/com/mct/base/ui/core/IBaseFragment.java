@@ -1,5 +1,7 @@
 package com.mct.base.ui.core;
 
+import android.view.View;
+
 import com.mct.base.ui.BaseFragment;
 
 public interface IBaseFragment {
@@ -25,6 +27,8 @@ public interface IBaseFragment {
      * @return transaction of parent fragment if have (recursive)
      */
     IExtraTransaction parentExtraTransaction(Class<? extends BaseFragment> parent);
+
+    View getParentView();
 
     void post(Runnable runnable);
 

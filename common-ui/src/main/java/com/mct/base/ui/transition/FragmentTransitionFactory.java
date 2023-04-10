@@ -76,6 +76,16 @@ public abstract class FragmentTransitionFactory {
      * {@link BaseFragment#onCreateAnimation(int, boolean, int)}
      */
     @NonNull
+    public static FragmentTransition createAnimator(@AnimatorStyle int style) {
+        return createAnimator(style, AnimDirection.NONE, style, AnimDirection.NONE);
+    }
+
+    /**
+     * Note: the anim enter, exit, popEnter, popExit<br/>
+     * was create by ({@link AnimatorStyle} and {@link AnimDirection}) the value always < 0 <br/>
+     * {@link BaseFragment#onCreateAnimation(int, boolean, int)}
+     */
+    @NonNull
     public static FragmentTransition createAnimator(@AnimatorStyle int style, @AnimDirection int direction) {
         return createAnimator(style, direction, style, direction);
     }
