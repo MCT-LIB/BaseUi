@@ -49,7 +49,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         // update elevation before running animation
-        getView().setElevation(getPopDirection() ? enter ? 0 : 1 : enter ? 1 : 0);
+        getView().setElevation(getPopDirection() ? enter ? -1 : 1 : enter ? 1 : -1);
         if (nextAnim < 0) {
             mAnimExtras = FragmentTransitionAnimFactory.create(onRequestAnimOptionsData(nextAnim, enter));
         } else {
@@ -231,21 +231,21 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
     @SuppressLint("ClickableViewAccessibility")
     private void setFragmentTouch(boolean disable) {
-        String tag = "overlayTagView";
-        if (getView() != null && getView().getParent() instanceof ViewGroup) {
-            ViewGroup parent = (ViewGroup) getView().getParent();
+        String tag = "disableTouchOverlayTagView";
+        View view = getParentView();
+        if (view instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) view;
             View overlay = parent.findViewWithTag(tag);
             if (disable) {
                 if (overlay == null) {
                     overlay = new View(getContext());
                     overlay.setTag(tag);
+                    overlay.setElevation(Float.MAX_VALUE);
+                    overlay.setOnTouchListener((v, event) -> true);
                     parent.addView(overlay, new ViewGroup.LayoutParams(-1, -1));
                 }
-                overlay.setElevation(Float.MAX_VALUE);
-                overlay.setOnTouchListener((v, event) -> true);
             } else {
                 if (overlay != null) {
-                    overlay.setOnTouchListener(null);
                     parent.removeView(overlay);
                 }
             }
