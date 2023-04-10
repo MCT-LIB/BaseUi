@@ -34,12 +34,12 @@ public class MoveAnimator extends ViewPropertyAnimator {
         switch (direction) {
             case UP:
             case DOWN:
-                return new VerticalMoveAnimation(view, direction, enter, duration).init();
+                return new VerticalMoveAnimator(view, direction, enter, duration).init();
             case LEFT:
             case RIGHT:
             case NONE:
             default:
-                return new HorizontalMoveAnimation(view, direction, enter, duration).init();
+                return new HorizontalMoveAnimator(view, direction, enter, duration).init();
         }
     }
 
@@ -51,9 +51,9 @@ public class MoveAnimator extends ViewPropertyAnimator {
         setInterpolator(new AccelerateDecelerateInterpolator());
     }
 
-    private static class VerticalMoveAnimation extends MoveAnimator {
+    private static class VerticalMoveAnimator extends MoveAnimator {
 
-        public VerticalMoveAnimation(View view, int direction, boolean enter, long duration) {
+        public VerticalMoveAnimator(View view, int direction, boolean enter, long duration) {
             super(view, direction, enter, duration);
         }
 
@@ -67,9 +67,9 @@ public class MoveAnimator extends ViewPropertyAnimator {
         }
     }
 
-    private static class HorizontalMoveAnimation extends MoveAnimator {
+    private static class HorizontalMoveAnimator extends MoveAnimator {
 
-        public HorizontalMoveAnimation(View view, int direction, boolean enter, long duration) {
+        public HorizontalMoveAnimator(View view, int direction, boolean enter, long duration) {
             super(view, direction, enter, duration);
         }
 

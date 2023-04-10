@@ -2,7 +2,6 @@ package com.mct.base.ui.transition.option;
 
 import androidx.annotation.NonNull;
 
-import com.mct.base.ui.transition.annotation.AnimBehavior;
 import com.mct.base.ui.transition.annotation.AnimDirection;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
@@ -16,7 +15,6 @@ public class AnimOptions {
         return new AnimOptions.Builder()
                 .animType(AnimOptionsStorage.TYPE.get(value))
                 .animStyle(AnimOptionsStorage.STYLE.get(value))
-                .animBehavior(AnimOptionsStorage.BEHAVIOR.get(value))
                 .animDirection(AnimOptionsStorage.DIRECTION.get(value))
                 .build();
     }
@@ -25,20 +23,17 @@ public class AnimOptions {
         int value = 0;
         value = AnimOptionsStorage.TYPE.set(value, options.animType);
         value = AnimOptionsStorage.STYLE.set(value, options.animStyle);
-        value = AnimOptionsStorage.BEHAVIOR.set(value, options.animBehavior);
         value = AnimOptionsStorage.DIRECTION.set(value, options.animDirection);
         return -Math.abs(value);
     }
 
     private final int animType;
     private final int animStyle;
-    private final int animBehavior;
     private final int animDirection;
 
     private AnimOptions(@NonNull Builder builder) {
         this.animType = builder.animType;
         this.animStyle = builder.animStyle;
-        this.animBehavior = builder.animBehavior;
         this.animDirection = builder.animDirection;
     }
 
@@ -51,11 +46,6 @@ public class AnimOptions {
         return animStyle;
     }
 
-    @AnimBehavior
-    public int getAnimBehavior() {
-        return animBehavior;
-    }
-
     @AnimDirection
     public int getAnimDirection() {
         return animDirection;
@@ -64,7 +54,6 @@ public class AnimOptions {
     public static class Builder {
         private int animType;
         private int animStyle;
-        private int animBehavior;
         private int animDirection;
 
         public Builder animType(@AnimType int animType) {
@@ -74,11 +63,6 @@ public class AnimOptions {
 
         public Builder animStyle(@AnimationStyle @AnimatorStyle int animStyle) {
             this.animStyle = animStyle;
-            return this;
-        }
-
-        public Builder animBehavior(@AnimBehavior int animBehavior) {
-            this.animBehavior = animBehavior;
             return this;
         }
 

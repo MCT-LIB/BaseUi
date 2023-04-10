@@ -1,9 +1,5 @@
 package com.mct.base.ui.transition.animator;
 
-import static com.mct.base.ui.transition.annotation.AnimBehavior.IN;
-import static com.mct.base.ui.transition.annotation.AnimBehavior.NONE;
-import static com.mct.base.ui.transition.annotation.AnimBehavior.OUT;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.view.View;
@@ -13,12 +9,9 @@ import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 
-import com.mct.base.ui.transition.annotation.AnimBehavior;
-
 public class CircularRevealAnimator extends ViewPropertyAnimator {
 
     private static final int OFFSET_DURATION = 200;
-    protected final @AnimBehavior int mBehavior;
     protected final boolean mEnter;
     protected final int mCenterX;
     protected final int mCenterY;
@@ -27,26 +20,21 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
      * Create new Animator.
      *
      * @param view     Target of animator
-     * @param behavior Behavior of animator
      * @param enter    true for Enter / false for Exit
      * @param duration Duration of animator
      * @return FadeAnimator
      */
     @NonNull
-    public static Animator create(View view, @AnimBehavior int behavior, boolean enter, int duration, int centerX, int centerY) {
-        switch (behavior) {
-            case IN:
-                return new CircularRevealInAnimator(view, behavior, enter, duration, centerX, centerY).init();
-            case OUT:
-            case NONE:
-            default:
-                return new CircularRevealOutAnimator(view, behavior, enter, duration, centerX, centerY).init();
+    public static Animator create(View view, boolean enter, int duration, int centerX, int centerY) {
+        if (enter) {
+            return new CircularRevealInAnimator(view, enter, duration, centerX, centerY).init();
+        } else {
+            return new CircularRevealOutAnimator(view, enter, duration, centerX, centerY).init();
         }
     }
 
-    public CircularRevealAnimator(View view, @AnimBehavior int behavior, boolean enter, int duration, int centerX, int centerY) {
+    public CircularRevealAnimator(View view, boolean enter, int duration, int centerX, int centerY) {
         super(view);
-        this.mBehavior = behavior;
         this.mEnter = enter;
         this.mCenterX = centerX;
         this.mCenterY = centerY;
@@ -55,8 +43,8 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
 
     private static class CircularRevealInAnimator extends CircularRevealAnimator {
 
-        public CircularRevealInAnimator(View view, int behavior, boolean enter, int duration, int centerX, int centerY) {
-            super(view, behavior, enter, duration, centerX, centerY);
+        public CircularRevealInAnimator(View view, boolean enter, int duration, int centerX, int centerY) {
+            super(view, enter, duration, centerX, centerY);
         }
 
         @Override
@@ -71,8 +59,8 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
 
     private static class CircularRevealOutAnimator extends CircularRevealAnimator {
 
-        public CircularRevealOutAnimator(View view, int behavior, boolean enter, int duration, int centerX, int centerY) {
-            super(view, behavior, enter, duration, centerX, centerY);
+        public CircularRevealOutAnimator(View view, boolean enter, int duration, int centerX, int centerY) {
+            super(view, enter, duration, centerX, centerY);
         }
 
         @Override

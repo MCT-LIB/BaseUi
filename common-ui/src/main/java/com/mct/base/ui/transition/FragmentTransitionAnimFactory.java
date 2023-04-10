@@ -85,7 +85,6 @@ public class FragmentTransitionAnimFactory {
         return create(AnimExtras.class);
     }
 
-
     @NonNull
     private static Animation createAnimation(@NonNull AnimOptionsData aod) {
         AnimOptions options = aod.getOptions();
@@ -135,7 +134,6 @@ public class FragmentTransitionAnimFactory {
         AnimOptions options = aod.getOptions();
         int style = options.getAnimStyle();
         int direction = options.getAnimDirection();
-        int behavior = options.getAnimBehavior();
 
         View view = aod.getView();
         int duration = aod.getDuration();
@@ -145,8 +143,8 @@ public class FragmentTransitionAnimFactory {
         // @formatter:off
         switch (style) {
             case AnimatorStyle.MOVE:            return MoveAnimator.create(view, direction, enter, duration);
-            case AnimatorStyle.FADE:            return FadeAnimator.create(view, behavior, enter,duration);
-            case AnimatorStyle.CIRCULAR_REVEAL: return CircularRevealAnimator.create(view, behavior, enter, duration, center.x, center.y);
+            case AnimatorStyle.FADE:            return FadeAnimator.create(view, enter, duration);
+            case AnimatorStyle.CIRCULAR_REVEAL: return CircularRevealAnimator.create(view, enter, duration, center.x, center.y);
         }
         // @formatter:on
         return create(Animator.class);

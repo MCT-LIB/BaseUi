@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.mct.base.ui.BaseFragment;
-import com.mct.base.ui.transition.annotation.AnimBehavior;
 import com.mct.base.ui.transition.annotation.AnimDirection;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
@@ -67,16 +66,6 @@ public abstract class FragmentTransitionFactory {
         return withDirection(AnimType.ANIMATION, style, direction, AnimType.ANIMATION, popStyle, popDirection);
     }
 
-    @NonNull
-    public static FragmentTransition createAnimationWithBehavior(@AnimatorStyle int style, @AnimBehavior int behavior) {
-        return createAnimationWithBehavior(style, behavior, style, behavior);
-    }
-
-    @NonNull
-    public static FragmentTransition createAnimationWithBehavior(@AnimatorStyle int style, @AnimBehavior int behavior, @AnimatorStyle int popStyle, @AnimBehavior int popBehavior) {
-        return withBehavior(AnimType.ANIMATION, style, behavior, AnimType.ANIMATION, popStyle, popBehavior);
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // Animator
     ///////////////////////////////////////////////////////////////////////////
@@ -102,29 +91,14 @@ public abstract class FragmentTransitionFactory {
     }
 
     @NonNull
-    public static FragmentTransition createAnimatorWithBehavior(@AnimatorStyle int style, @AnimBehavior int behavior) {
-        return createAnimatorWithBehavior(style, behavior, style, behavior);
-    }
-
-    @NonNull
-    public static FragmentTransition createAnimatorWithBehavior(@AnimatorStyle int style, @AnimBehavior int behavior, @AnimatorStyle int popStyle, @AnimBehavior int popBehavior) {
-        return withBehavior(AnimType.ANIMATOR, style, behavior, AnimType.ANIMATOR, popStyle, popBehavior);
-    }
-
-    @NonNull
     public static FragmentTransition createCircularAnimator() {
-        return createCircularAnimator(AnimBehavior.IN, AnimBehavior.OUT);
-    }
+        AnimOptions circularReveal = createOptions(AnimType.ANIMATOR, AnimatorStyle.CIRCULAR_REVEAL).build();
+        AnimOptions fade = createOptions(AnimType.ANIMATOR, AnimatorStyle.FADE).build();
 
-    @NonNull
-    public static FragmentTransition createCircularAnimator(@AnimBehavior int behavior, @AnimBehavior int popBehavior) {
-        AnimOptions.Builder circularReveal = createOptions(AnimType.ANIMATOR, AnimatorStyle.CIRCULAR_REVEAL);
-        AnimOptions.Builder fadeOptions = createOptions(AnimType.ANIMATOR, AnimatorStyle.FADE);
-
-        AnimOptionsOrAnim enter = new AnimOptionsOrAnim(circularReveal.animBehavior(behavior).build());
-        AnimOptionsOrAnim exit = new AnimOptionsOrAnim(fadeOptions.animBehavior(AnimBehavior.OUT).build());
-        AnimOptionsOrAnim popEnter = new AnimOptionsOrAnim(fadeOptions.animBehavior(AnimBehavior.IN).build());
-        AnimOptionsOrAnim popExit = new AnimOptionsOrAnim(circularReveal.animBehavior(popBehavior).build());
+        AnimOptionsOrAnim enter = new AnimOptionsOrAnim(circularReveal);
+        AnimOptionsOrAnim exit = new AnimOptionsOrAnim(fade);
+        AnimOptionsOrAnim popEnter = new AnimOptionsOrAnim(fade);
+        AnimOptionsOrAnim popExit = new AnimOptionsOrAnim(circularReveal);
 
         return create(enter, exit, popEnter, popExit);
     }
@@ -152,17 +126,6 @@ public abstract class FragmentTransitionFactory {
                 .build());
         AnimOptionsOrAnim popEnterExit = new AnimOptionsOrAnim(createOptions(popType, popStyle)
                 .animDirection(popDirection)
-                .build());
-        return create(enterExit, enterExit, popEnterExit, popEnterExit);
-    }
-
-    private static FragmentTransition withBehavior(int type, int style, int behavior,
-                                                   int popType, int popStyle, int popBehavior) {
-        AnimOptionsOrAnim enterExit = new AnimOptionsOrAnim(createOptions(type, style)
-                .animBehavior(behavior)
-                .build());
-        AnimOptionsOrAnim popEnterExit = new AnimOptionsOrAnim(createOptions(popType, popStyle)
-                .animBehavior(popBehavior)
                 .build());
         return create(enterExit, enterExit, popEnterExit, popEnterExit);
     }
