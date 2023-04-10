@@ -1,6 +1,5 @@
 package com.mct.base.ui.transition.animator;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;

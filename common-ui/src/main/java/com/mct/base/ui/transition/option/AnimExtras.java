@@ -5,7 +5,6 @@ import android.view.animation.Animation;
 
 public class AnimExtras {
 
-
     public final Animation animation;
     public final Animator animator;
 
@@ -25,17 +24,14 @@ public class AnimExtras {
         }
     }
 
-//    public void setupView(@NonNull View view) {
-//        long duration = 0;
-//        disableTouch(view);
-//        if (animation != null) {
-//            duration = animation.getDuration();
-//        }
-//        if (animator != null) {
-//            duration = animator.getDuration();
-//        }
-//        view.postDelayed(() -> enableTouch(view), duration);
-//    }
-
+    public long getDuration() {
+        if (animation != null) {
+            return animation.getDuration();
+        }
+        if (animator != null) {
+            return animator.getDuration();
+        }
+        return 0;
+    }
 
 }

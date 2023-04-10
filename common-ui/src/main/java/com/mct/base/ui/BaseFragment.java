@@ -53,26 +53,15 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         } else {
             mAnimExtras = FragmentTransitionAnimFactory.create(getContext(), transit, enter, nextAnim);
         }
-        if (mAnimExtras.animation != null) {
-            if (enter && onDisableTouchEventWhenAnimRunning()) {
-                disableFragmentTouchInDuration(mAnimExtras.animation.getDuration());
-            }
-            return mAnimExtras.animation;
+        if (onDisableTouchEventWhenAnimRunning()) {
+            disableFragmentTouchInDuration(mAnimExtras.getDuration() / 2);
         }
-        return super.onCreateAnimation(transit, enter, nextAnim);
+        return mAnimExtras.animation != null ? mAnimExtras.animation : null;
     }
 
     @Nullable
     @Override
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
-        if (nextAnim < 0) {
-            AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
-            AnimOptionsData aod = onRequestAnimOptionsData(options, enter);
-            mAnimExtras = FragmentTransitionAnimFactory.create(aod);
-        }
-        if (enter && onDisableTouchEventWhenAnimRunning()) {
-            disableFragmentTouchInDuration(mAnimExtras.animator.getDuration());
-        }
         return mAnimExtras.animator;
     }
 
@@ -220,6 +209,9 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     private void disableFragmentTouchInDuration(long duration) {
+        if (duration <= 0) {
+            return;
+        }
         setFragmentTouch(true);
         postDelayed(() -> setFragmentTouch(false), duration);
     }
