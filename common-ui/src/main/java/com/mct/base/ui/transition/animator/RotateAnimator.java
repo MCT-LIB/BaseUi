@@ -64,7 +64,7 @@ public class RotateAnimator extends ViewPropertyAnimator {
         if (isInitAnimator()) {
             return;
         }
-        int rotate = 200;
+        int rotate = 180;
         animator.play(ObjectAnimator.ofFloat(target, "rotation", mEnter ? -rotate : 0, mEnter ? 0 : rotate));
     }
 

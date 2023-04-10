@@ -1,4 +1,4 @@
-package com.mct.base.ui.transition.option;
+package com.mct.base.ui.transition.options;
 
 enum AnimOptionsStorage {
 

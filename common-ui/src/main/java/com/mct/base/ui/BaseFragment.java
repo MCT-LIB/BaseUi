@@ -21,9 +21,11 @@ import com.mct.base.ui.transition.FragmentTransitionAnimFactory;
 import com.mct.base.ui.transition.animator.CircularRevealAnimator;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
-import com.mct.base.ui.transition.option.AnimExtras;
-import com.mct.base.ui.transition.option.AnimOptions;
-import com.mct.base.ui.transition.option.AnimOptionsData;
+import com.mct.base.ui.transition.options.AnimExtras;
+import com.mct.base.ui.transition.options.AnimOptions;
+import com.mct.base.ui.transition.options.AnimOptionsData;
+
+import java.lang.reflect.Method;
 
 public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView {
 
@@ -46,6 +48,8 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        // update elevation before running animation
+        getView().setElevation(getPopDirection() ? enter ? 0 : 1 : enter ? 1 : 0);
         if (nextAnim < 0) {
             mAnimExtras = FragmentTransitionAnimFactory.create(onRequestAnimOptionsData(nextAnim, enter));
         } else {
@@ -67,6 +71,16 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         return 0;
     }
 
+    protected final boolean getPopDirection() {
+        try {
+            Method method = Fragment.class.getDeclaredMethod("getPopDirection");
+            method.setAccessible(true);
+            return (boolean) method.invoke(this);
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
     protected AnimOptionsData onRequestAnimOptionsData(int nextAnim, boolean enter) {
         AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
         AnimOptionsData aod = new AnimOptionsData();
@@ -80,10 +94,6 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
             }
             aod.setView(view);
             if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
-                // make the view on the top of container when running animation
-                final float lastElevation = view.getElevation();
-                view.setElevation(Integer.MAX_VALUE);
-                view.postDelayed(() -> view.setElevation(lastElevation), aod.getDuration());
                 aod.setCircularPosition(onRequestCircularPosition());
             }
         }

@@ -17,6 +17,7 @@ import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
 import com.mct.base.ui.transition.annotation.AnimDirection;
+import com.mct.base.ui.transition.options.AnimOptions;
 
 public class Test3DAnimationBodyFragment extends BaseFragment implements View.OnClickListener {
 
@@ -64,9 +65,10 @@ public class Test3DAnimationBodyFragment extends BaseFragment implements View.On
                 direction = AnimDirection.NONE;
                 break;
         }
+        AnimOptions anim = AnimOptions.animation(Test3DAnimationFragment.sAnimationStyle).direction(direction).build();
         extraTransaction.replaceFragment(
                 new Test3DAnimationBodyFragment(),
-                FragmentTransitionFactory.createAnimation(Test3DAnimationFragment.sAnimationStyle, direction)
+                FragmentTransitionFactory.createTransition(anim, anim)
         );
     }
 

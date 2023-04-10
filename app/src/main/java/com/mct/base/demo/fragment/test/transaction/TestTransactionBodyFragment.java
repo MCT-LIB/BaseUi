@@ -17,8 +17,8 @@ import com.mct.base.demo.utils.Utils;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
-import com.mct.base.ui.transition.annotation.AnimDirection;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
+import com.mct.base.ui.transition.options.AnimOptions;
 
 public class TestTransactionBodyFragment extends BaseFragment implements View.OnClickListener {
 
@@ -55,24 +55,28 @@ public class TestTransactionBodyFragment extends BaseFragment implements View.On
             case R.id.btn_replaceFragment:
                 extraTransaction.replaceFragment(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createCircularAnimator()
+                        FragmentTransitionFactory.createCircularRevealTransition()
                 );
                 break;
             case R.id.btn_replaceFragmentToStack:
                 extraTransaction.replaceFragmentToStack(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createAnimation(
-                                AnimationStyle.CUBE, AnimDirection.LEFT,
-                                AnimationStyle.CUBE, AnimDirection.RIGHT
+                        FragmentTransitionFactory.createTransition(
+                                AnimOptions.animation(AnimationStyle.CUBE).left().build(),
+                                AnimOptions.animation(AnimationStyle.CUBE).left().build(),
+                                AnimOptions.animation(AnimationStyle.CUBE).right().build(),
+                                AnimOptions.animation(AnimationStyle.CUBE).right().build()
                         )
                 );
                 break;
             case R.id.btn_replaceAndClearBackStack:
                 extraTransaction.replaceAndClearBackStack(
                         new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createAnimation(
-                                AnimationStyle.CUBE, AnimDirection.UP,
-                                AnimationStyle.CUBE, AnimDirection.RIGHT
+                        FragmentTransitionFactory.createTransition(
+                                AnimOptions.animation(AnimationStyle.CUBE).up().build(),
+                                AnimOptions.animation(AnimationStyle.CUBE).up().build(),
+                                AnimOptions.animation(AnimationStyle.CUBE).right().build(),
+                                AnimOptions.animation(AnimationStyle.CUBE).right().build()
                         )
                 );
                 break;

@@ -1,4 +1,4 @@
-package com.mct.base.ui.transition.option;
+package com.mct.base.ui.transition.options;
 
 import android.animation.Animator;
 import android.view.animation.Animation;

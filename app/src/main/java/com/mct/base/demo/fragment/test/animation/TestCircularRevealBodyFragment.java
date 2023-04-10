@@ -75,7 +75,7 @@ public class TestCircularRevealBodyFragment extends BaseFragment implements View
         Point point = new Point(x, y);
         parentExtraTransaction().replaceFragmentToStack(
                 TestCircularRevealBodyFragment.newInstance(point),
-                FragmentTransitionFactory.createCircularAnimator()
+                FragmentTransitionFactory.createCircularRevealTransition()
         );
     }
 
