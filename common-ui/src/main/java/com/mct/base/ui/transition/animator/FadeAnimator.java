@@ -20,11 +20,11 @@ public class FadeAnimator extends ViewPropertyAnimator {
      * @return FadeAnimator
      */
     @NonNull
-    public static Animator create(View view, boolean enter, long duration) {
+    public static FadeAnimator create(View view, boolean enter, long duration) {
         if (enter) {
-            return new FadeInAnimator(view, enter, duration).init();
+            return new FadeInAnimator(view, enter, duration);
         } else {
-            return new FadeOutAnimator(view, enter, duration).init();
+            return new FadeOutAnimator(view, enter, duration);
         }
     }
 

@@ -3,7 +3,6 @@ package com.mct.base.ui.transition.animator;
 import static com.mct.base.ui.transition.annotation.AnimDirection.LEFT;
 import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;
@@ -27,21 +26,21 @@ public class RotateAnimator extends ViewPropertyAnimator {
      * @param duration  Duration of animator
      * @return MoveAnimator
      */
-    public static @NonNull Animator create(View view, @AnimDirection int direction, boolean enter, long duration) {
-        return new RotateAnimator(view, direction, enter, duration).init();
+    public static @NonNull RotateAnimator create(View view, @AnimDirection int direction, boolean enter, long duration) {
+        return new RotateAnimator(view, direction, enter, duration);
     }
 
-    public static @NonNull Animator createRotateUp(View view, @AnimDirection int direction, boolean enter, long duration) {
+    public static @NonNull RotateAnimator createRotateUp(View view, @AnimDirection int direction, boolean enter, long duration) {
         if (direction == LEFT || direction == RIGHT) {
-            return new RotateUpAnimator(view, direction, enter, duration).init();
+            return new RotateUpAnimator(view, direction, enter, duration);
         } else {
             return create(view, direction, enter, duration);
         }
     }
 
-    public static @NonNull Animator createRotateDown(View view, @AnimDirection int direction, boolean enter, long duration) {
+    public static @NonNull RotateAnimator createRotateDown(View view, @AnimDirection int direction, boolean enter, long duration) {
         if (direction == LEFT || direction == RIGHT) {
-            return new RotateDownAnimator(view, direction, enter, duration).init();
+            return new RotateDownAnimator(view, direction, enter, duration);
         } else {
             return create(view, direction, enter, duration);
         }
@@ -65,17 +64,8 @@ public class RotateAnimator extends ViewPropertyAnimator {
         if (isInitAnimator()) {
             return;
         }
-        if (mEnter) {
-            animator.playTogether(
-                    ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                    ObjectAnimator.ofFloat(target, "rotation", -200, 0)
-            );
-        } else {
-            animator.playTogether(
-                    ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                    ObjectAnimator.ofFloat(target, "rotation", 0, 200)
-            );
-        }
+        int rotate = 200;
+        animator.play(ObjectAnimator.ofFloat(target, "rotation", mEnter ? -rotate : 0, mEnter ? 0 : rotate));
     }
 
     private static class RotateUpAnimator extends RotateAnimator {
@@ -91,23 +81,16 @@ public class RotateAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            float x = mDirection == LEFT ? target.getPaddingLeft() : target.getWidth() - target.getPaddingRight();
-            float y = target.getHeight() - target.getPaddingBottom();
+            View parent = getTargetParent();
+            float x = mDirection == LEFT ? parent.getPaddingLeft() : parent.getWidth() - parent.getPaddingRight();
+            float y = parent.getHeight() - parent.getPaddingBottom();
             animator.playTogether(
                     ObjectAnimator.ofFloat(target, "pivotX", x, x),
                     ObjectAnimator.ofFloat(target, "pivotY", y, y)
             );
-            if (mEnter) {
-                animator.playTogether(
-                        ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                        ObjectAnimator.ofFloat(target, "rotation", mDirection == LEFT ? 90 : -90, 0)
-                );
-            } else {
-                animator.playTogether(
-                        ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                        ObjectAnimator.ofFloat(target, "rotation", 0, mDirection == LEFT ? -90 : 90)
-                );
-            }
+            animator.play(mEnter
+                    ? ObjectAnimator.ofFloat(target, "rotation", mDirection == LEFT ? 90 : -90, 0)
+                    : ObjectAnimator.ofFloat(target, "rotation", 0, mDirection == LEFT ? -90 : 90));
         }
     }
 
@@ -124,23 +107,16 @@ public class RotateAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            float x = mDirection == RIGHT ? target.getPaddingLeft() : target.getWidth() - target.getPaddingRight();
-            float y = target.getHeight() - target.getPaddingBottom();
+            View parent = getTargetParent();
+            float x = mDirection == RIGHT ? parent.getPaddingLeft() : parent.getWidth() - parent.getPaddingRight();
+            float y = parent.getHeight() - parent.getPaddingBottom();
             animator.playTogether(
                     ObjectAnimator.ofFloat(target, "pivotX", x, x),
                     ObjectAnimator.ofFloat(target, "pivotY", y, y)
             );
-            if (mEnter) {
-                animator.playTogether(
-                        ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                        ObjectAnimator.ofFloat(target, "rotation", mDirection == RIGHT ? -90 : 90, 0)
-                );
-            } else {
-                animator.playTogether(
-                        ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                        ObjectAnimator.ofFloat(target, "rotation", 0, mDirection == RIGHT ? 90 : -90)
-                );
-            }
+            animator.play(mEnter
+                    ? ObjectAnimator.ofFloat(target, "rotation", mDirection == RIGHT ? -90 : 90, 0)
+                    : ObjectAnimator.ofFloat(target, "rotation", 0, mDirection == RIGHT ? 90 : -90));
         }
     }
 

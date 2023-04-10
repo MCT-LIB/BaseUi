@@ -86,7 +86,11 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         aod.setDuration(onRequestAnimDuration());
         aod.setEnter(enter);
         if (options.getAnimType() == AnimType.ANIMATOR) {
-            aod.setView(getView());
+            View view = getView();
+            if (view.getParent() == null && view.getTag(R.id.tag_parent_view) == null) {
+                view.setTag(R.id.tag_parent_view, getParentView());
+            }
+            aod.setView(view);
             if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
                 aod.setCircularPosition(onRequestCircularPosition());
             }

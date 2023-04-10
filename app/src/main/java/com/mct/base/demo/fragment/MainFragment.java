@@ -32,8 +32,8 @@ public class MainFragment extends BaseFragment {
                 new TestTransactionFragment(),
                 //FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE))
                 FragmentTransitionFactory.createAnimator(
-                        AnimatorStyle.MOVE, AnimDirection.RIGHT,
-                        AnimatorStyle.MOVE, AnimDirection.LEFT
+                        AnimatorStyle.MOVE, AnimDirection.LEFT,
+                        AnimatorStyle.MOVE, AnimDirection.RIGHT
                 )
         ));
         view.findViewById(R.id.btn_test_animation).setOnClickListener(v -> extraTransaction().replaceFragmentToStack(

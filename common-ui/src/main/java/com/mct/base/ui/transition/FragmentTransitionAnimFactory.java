@@ -146,9 +146,9 @@ public class FragmentTransitionAnimFactory {
             case AnimatorStyle.MOVE:            return MoveAnimator.create(view, direction, enter, duration);
             case AnimatorStyle.FADE:            return FadeAnimator.create(view, enter, duration);
             case AnimatorStyle.CIRCULAR_REVEAL: return CircularRevealAnimator.create(view, enter, duration, center.x, center.y);
-            case AnimatorStyle.ROTATE:          return RotateAnimator.create(view, direction, enter,duration);
-            case AnimatorStyle.ROTATE_UP:       return RotateAnimator.createRotateUp(view, direction, enter,duration);
-            case AnimatorStyle.ROTATE_DOWN:     return RotateAnimator.createRotateDown(view, direction, enter,duration);
+            case AnimatorStyle.ROTATE:          return RotateAnimator.create(view, direction, enter,duration).fading(enter ? 0f : 1f, enter ? 1f : 0f);
+            case AnimatorStyle.ROTATE_UP:       return RotateAnimator.createRotateUp(view, direction, enter,duration).fading(enter ? 0.3f : 1f, enter ? 1f : 0.3f);
+            case AnimatorStyle.ROTATE_DOWN:     return RotateAnimator.createRotateDown(view, direction, enter,duration).fading(enter ? 0.3f : 1f, enter ? 1f : 0.3f);
         }
         // @formatter:on
         return create(Animator.class);

@@ -25,11 +25,11 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
      * @return FadeAnimator
      */
     @NonNull
-    public static Animator create(View view, boolean enter, int duration, int centerX, int centerY) {
+    public static CircularRevealAnimator create(View view, boolean enter, int duration, int centerX, int centerY) {
         if (enter) {
-            return new CircularRevealInAnimator(view, enter, duration, centerX, centerY).init();
+            return new CircularRevealInAnimator(view, enter, duration, centerX, centerY);
         } else {
-            return new CircularRevealOutAnimator(view, enter, duration, centerX, centerY).init();
+            return new CircularRevealOutAnimator(view, enter, duration, centerX, centerY);
         }
     }
 
@@ -50,7 +50,8 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            int endRadius = (int) Math.hypot(target.getWidth(), target.getHeight());
+            View parent = getTargetParent();
+            int endRadius = (int) Math.hypot(parent.getWidth(), parent.getHeight());
             Animator circularReveal = ViewAnimationUtils.createCircularReveal(target, mCenterX, mCenterY, 0f, endRadius);
             animator.play(circularReveal);
             animator.setInterpolator(new AccelerateInterpolator(1f));
@@ -66,7 +67,8 @@ public class CircularRevealAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            int startRadius = (int) Math.hypot(target.getWidth(), target.getHeight());
+            View parent = getTargetParent();
+            int startRadius = (int) Math.hypot(parent.getWidth(), parent.getHeight());
             Animator circularReveal = ViewAnimationUtils.createCircularReveal(target, mCenterX, mCenterY, startRadius, 0f);
             animator.play(circularReveal);
             animator.setInterpolator(new DecelerateInterpolator(1f));

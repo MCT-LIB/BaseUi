@@ -6,11 +6,9 @@ import static com.mct.base.ui.transition.annotation.AnimDirection.NONE;
 import static com.mct.base.ui.transition.annotation.AnimDirection.RIGHT;
 import static com.mct.base.ui.transition.annotation.AnimDirection.UP;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
@@ -31,16 +29,16 @@ public class MoveAnimator extends ViewPropertyAnimator {
      * @param duration  Duration of animator
      * @return MoveAnimator
      */
-    public static @NonNull Animator create(View view, @AnimDirection int direction, boolean enter, long duration) {
+    public static @NonNull MoveAnimator create(View view, @AnimDirection int direction, boolean enter, long duration) {
         switch (direction) {
             case UP:
             case DOWN:
-                return new VerticalMoveAnimator(view, direction, enter, duration).init();
+                return new VerticalMoveAnimator(view, direction, enter, duration);
             case LEFT:
             case RIGHT:
             case NONE:
             default:
-                return new HorizontalMoveAnimator(view, direction, enter, duration).init();
+                return new HorizontalMoveAnimator(view, direction, enter, duration);
         }
     }
 
@@ -61,36 +59,10 @@ public class MoveAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            if (mDirection == UP) {
-                if (mEnter) {
-                    ViewGroup parent = (ViewGroup) target.getParent();
-                    int distance = parent.getHeight() - target.getTop();
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                            ObjectAnimator.ofFloat(target, "translationY", distance, 0)
-                    );
-                } else {
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                            ObjectAnimator.ofFloat(target, "translationY", 0, -target.getBottom())
-                    );
-                }
-            } else {
-                if (mEnter) {
-                    int distance = target.getTop() + target.getHeight();
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                            ObjectAnimator.ofFloat(target, "translationY", -distance, 0)
-                    );
-                } else {
-                    ViewGroup parent = (ViewGroup) target.getParent();
-                    int distance = parent.getHeight() - target.getTop();
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                            ObjectAnimator.ofFloat(target, "translationY", 0, distance)
-                    );
-                }
-            }
+            int value = getTargetParent().getHeight();
+            animator.play(mDirection == UP
+                    ? ObjectAnimator.ofFloat(target, "translationY", mEnter ? value : 0, mEnter ? 0 : -value)
+                    : ObjectAnimator.ofFloat(target, "translationY", mEnter ? -value : 0, mEnter ? 0 : value));
         }
     }
 
@@ -103,33 +75,10 @@ public class MoveAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            ViewGroup parent = (ViewGroup) target.getParent();
-            int distance = parent.getWidth() - target.getLeft();
-            if (mDirection == LEFT) {
-                if (mEnter) {
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                            ObjectAnimator.ofFloat(target, "translationX", -distance, 0)
-                    );
-                } else {
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                            ObjectAnimator.ofFloat(target, "translationX", 0, distance)
-                    );
-                }
-            } else {
-                if (mEnter) {
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 0, 1),
-                            ObjectAnimator.ofFloat(target, "translationX", distance, 0)
-                    );
-                } else {
-                    animator.playTogether(
-                            ObjectAnimator.ofFloat(target, "alpha", 1, 0),
-                            ObjectAnimator.ofFloat(target, "translationX", 0, -distance)
-                    );
-                }
-            }
+            int value = getTargetParent().getWidth();
+            animator.play(mDirection == LEFT
+                    ? ObjectAnimator.ofFloat(target, "translationX", mEnter ? value : 0, mEnter ? 0 : -value)
+                    : ObjectAnimator.ofFloat(target, "translationX", mEnter ? -value : 0, mEnter ? 0 : value));
         }
     }
 
