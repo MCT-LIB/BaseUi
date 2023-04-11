@@ -17,7 +17,6 @@ import com.mct.base.demo.utils.Utils;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
 import com.mct.base.ui.transition.annotation.AnimationStyle;
-import com.mct.base.ui.transition.annotation.AnimatorStyle;
 import com.mct.base.ui.transition.options.AnimOptions;
 
 public class MainFragment extends BaseFragment {
@@ -29,7 +28,7 @@ public class MainFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         view.setBackgroundColor(color);
-        view.findViewById(R.id.btn_test_backstack).setOnClickListener(v -> extraTransaction().replaceFragmentToStack(
+        view.findViewById(R.id.btn_test_backstack).setOnClickListener(v -> extraTransaction().addFragmentToStack(
                 new TestTransactionFragment(),
                 //FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE))
                 FragmentTransitionFactory.createTransition(

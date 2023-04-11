@@ -30,6 +30,10 @@ public interface IBaseFragment {
 
     View getParentView();
 
+    void pendingPreventAnimation();
+
+    void removePendingPreventAnimation();
+
     void post(Runnable runnable);
 
     void postDelayed(Runnable runnable, long delay);

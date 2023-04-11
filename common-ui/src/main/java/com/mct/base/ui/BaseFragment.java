@@ -20,6 +20,7 @@ import com.mct.base.ui.core.IBaseView;
 import com.mct.base.ui.core.IExtraTransaction;
 import com.mct.base.ui.core.IKeyboardManager;
 import com.mct.base.ui.transition.FragmentTransitionAnimFactory;
+import com.mct.base.ui.transition.animation.NoneAnimation;
 import com.mct.base.ui.transition.animator.CircularRevealAnimator;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
@@ -39,6 +40,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     private IBaseActivity mIBaseActivity;
     private IExtraTransaction mIExtraTransaction;
     private AnimExtras mAnimExtras;
+    private boolean mPendingPreventAnimation;
 
     ///////////////////////////////////////////////////////////////////////////
     // Lifecycle area
@@ -58,6 +60,10 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if (mPendingPreventAnimation) {
+            mPendingPreventAnimation = false;
+            return NoneAnimation.create(0);
+        }
         if (transit == 0 && nextAnim <= 0) {
             mAnimExtras = FragmentTransitionAnimFactory.create(createAnimOptionsData(nextAnim, enter));
         } else {
@@ -165,6 +171,16 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
             return getActivity().findViewById(extraTransaction().getContainerId());
         }
         return null;
+    }
+
+    @Override
+    public void pendingPreventAnimation() {
+        this.mPendingPreventAnimation = true;
+    }
+
+    @Override
+    public void removePendingPreventAnimation() {
+        this.mPendingPreventAnimation = false;
     }
 
     @Override

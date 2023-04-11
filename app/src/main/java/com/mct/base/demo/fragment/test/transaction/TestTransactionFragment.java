@@ -1,6 +1,5 @@
 package com.mct.base.demo.fragment.test.transaction;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +10,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.mct.base.demo.R;
-import com.mct.base.ui.BaseFragment;
+import com.mct.base.ui.swipeback.SwipeBackFragment;
+import com.mct.base.ui.swipeback.SwipeBackLayout;
 
-public class TestTransactionFragment extends BaseFragment {
+public class TestTransactionFragment extends SwipeBackFragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_test_transaction, container, false);
+        View view = inflater.inflate(R.layout.fragment_test_transaction, container, false);
+        return attachToSwipeBack(view);
     }
 
     @Override
@@ -28,6 +29,9 @@ public class TestTransactionFragment extends BaseFragment {
         toolbar.setNavigationOnClickListener(v -> extraTransaction().popFragment());
 
         childExtraTransaction().replaceFragment(new TestTransactionBodyFragment());
+
+        setEdgeLevel(SwipeBackLayout.EdgeLevel.MAX);
+        setParallaxOffset(0.5f);
     }
 
     @Override

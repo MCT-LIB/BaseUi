@@ -32,6 +32,11 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     @Override
+    public FragmentManager getFragmentManager() {
+        return mFragmentManager;
+    }
+
+    @Override
     public int getBackStackCount() {
         return mFragmentManager.getBackStackEntryCount();
     }
@@ -49,6 +54,35 @@ class ExtraTransaction implements IExtraTransaction {
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    @Override
+    public void addFragment(Fragment fragment) {
+        addFragment(fragment, FragmentTransitionFactory.createDefaultTransition());
+    }
+
+    @Override
+    public void addFragment(Fragment fragment, @NonNull FragmentTransition transition) {
+        performHideSoftInput();
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transition.applyTransition(transaction);
+        transaction.add(mContainerId, fragment, fragment.getClass().getName());
+        transaction.commit();
+    }
+
+    @Override
+    public void addFragmentToStack(Fragment fragment) {
+        addFragmentToStack(fragment, FragmentTransitionFactory.createDefaultTransition());
+    }
+
+    @Override
+    public void addFragmentToStack(Fragment fragment, @NonNull FragmentTransition transition) {
+        performHideSoftInput();
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transition.applyTransition(transaction);
+        transaction.add(mContainerId, fragment, fragment.getClass().getName());
+        transaction.addToBackStack(fragment.getClass().getName());
+        mFragmentIds.add(transaction.commit());
     }
 
     @Override
