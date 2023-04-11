@@ -10,6 +10,7 @@ import static com.mct.base.ui.transition.annotation.AnimationStyle.MOVE;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.MOVE_CUBE;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.MOVE_FLIP;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.MOVE_PULL;
+import static com.mct.base.ui.transition.annotation.AnimationStyle.NONE;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.PUSH_MOVE;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.PUSH_PULL;
 import static com.mct.base.ui.transition.annotation.AnimationStyle.SIDES;
@@ -32,6 +33,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.mct.base.ui.transition.animation.CubeAnimation;
 import com.mct.base.ui.transition.animation.FlipAnimation;
 import com.mct.base.ui.transition.animation.MoveAnimation;
+import com.mct.base.ui.transition.animation.NoneAnimation;
 import com.mct.base.ui.transition.animation.PushPullAnimation;
 import com.mct.base.ui.transition.animation.SidesAnimation;
 import com.mct.base.ui.transition.animator.CircularRevealAnimator;
@@ -97,6 +99,7 @@ public class FragmentTransitionAnimFactory {
 
         // @formatter:off
         switch (style) {
+            case NONE:      return NoneAnimation.create(duration);
             case MOVE:      return MoveAnimation.create(direction, enter, duration);
             case CUBE:      return CubeAnimation.create(direction, enter, duration);
             case FLIP:      return FlipAnimation.create(direction, enter, duration);

@@ -107,12 +107,4 @@ public class TestTransactionBodyFragment extends BaseFragment implements View.On
         return 0;
     }
 
-    @Override
-    public boolean onBackPressed() {
-        if (parentExtraTransaction().getBackStackCount() > 0) {
-            parentExtraTransaction().popFragment();
-            return true;
-        }
-        return false;
-    }
 }

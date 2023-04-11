@@ -72,12 +72,4 @@ public class Test3DAnimationBodyFragment extends BaseFragment implements View.On
         );
     }
 
-    @Override
-    public boolean onBackPressed() {
-        if (parentExtraTransaction().getBackStackCount() > 0) {
-            parentExtraTransaction().popFragment();
-            return true;
-        }
-        return false;
-    }
 }

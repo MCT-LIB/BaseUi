@@ -3,11 +3,13 @@ package com.mct.base.ui;
 import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,12 +29,20 @@ import com.mct.base.ui.transition.options.AnimOptionsData;
 
 import java.lang.reflect.Method;
 
-public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView {
+public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView, AnimExtras.AnimExtrasListener {
 
-    private static final int ANIM_DURATION = 300;
+    private static final int VIEW_ELEVATION = 1;
+    private static final int OVERLAY_VIEW_ELEVATION = 0;
+    private static final int DISABLE_TOUCH_OVERLAY_VIEW_ELEVATION = 9999;
+    private static final int ANIMATION_DURATION = 300;
+
     private IBaseActivity mIBaseActivity;
     private IExtraTransaction mIExtraTransaction;
     private AnimExtras mAnimExtras;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Lifecycle area
+    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -48,16 +58,15 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        // update elevation before running animation
-        getView().setElevation(getPopDirection() ? enter ? -1 : 1 : enter ? 1 : -1);
-        if (nextAnim < 0) {
-            mAnimExtras = FragmentTransitionAnimFactory.create(onRequestAnimOptionsData(nextAnim, enter));
+        if (transit == 0 && nextAnim <= 0) {
+            mAnimExtras = FragmentTransitionAnimFactory.create(createAnimOptionsData(nextAnim, enter));
         } else {
             mAnimExtras = FragmentTransitionAnimFactory.create(getContext(), transit, enter, nextAnim);
         }
-        if (onDisableTouchEventWhenAnimRunning()) {
-            disableFragmentTouchInDuration(mAnimExtras.getDuration() / 2);
-        }
+
+        mAnimExtras.setAnimInfo(transit, enter, nextAnim);
+        mAnimExtras.addAnimationListener(this);
+
         return mAnimExtras.animation != null ? mAnimExtras.animation : null;
     }
 
@@ -67,65 +76,48 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         return mAnimExtras.animator;
     }
 
-    public int getContainerId() {
-        return 0;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        clearOverlay();
     }
 
-    protected final boolean getPopDirection() {
-        try {
-            Method method = Fragment.class.getDeclaredMethod("getPopDirection");
-            method.setAccessible(true);
-            return (boolean) method.invoke(this);
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
+    ///////////////////////////////////////////////////////////////////////////
+    // Impl area
+    ///////////////////////////////////////////////////////////////////////////
 
-    protected AnimOptionsData onRequestAnimOptionsData(int nextAnim, boolean enter) {
-        AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
-        AnimOptionsData aod = new AnimOptionsData();
-        aod.setOptions(options);
-        aod.setDuration(onRequestAnimDuration());
-        aod.setEnter(enter);
-        if (options.getAnimType() == AnimType.ANIMATOR) {
-            View view = getView();
-            if (view.getParent() == null && view.getTag(R.id.tag_parent_view) == null) {
-                view.setTag(R.id.tag_parent_view, getParentView());
-            }
-            aod.setView(view);
-            if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
-                aod.setCircularPosition(onRequestCircularPosition());
+    /* ---------- AnimExtrasListener ---------- */
+    @Override
+    public void onAnimationStart(@NonNull AnimExtras animExtras) {
+        int transit = animExtras.getTransit();
+        boolean enter = animExtras.isEnter();
+        int nextAnim = animExtras.getNextAnim();
+
+        // update elevation before running animation
+        int e = VIEW_ELEVATION;
+        getView().setElevation(getPopDirection() ? enter ? -e : e : enter ? e : -e);
+
+        if (transit == 0 && nextAnim <= 0) {
+            AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
+            if (options.hasOverlay() && canShowOverlayWhileRunningAnimation()) {
+                setFragmentOverlay(true);
             }
         }
-        return aod;
-    }
 
-    /**
-     * This function support for {@link CircularRevealAnimator} animator.<br/>
-     * You can override to modify the initial position of anim.<br/>
-     * Default center of the view.
-     */
-    @NonNull
-    protected Point onRequestCircularPosition() {
-        Point result = new Point();
-        View view = getParentView();
-        if (view != null) {
-            int[] positions = new int[2];
-            view.getLocationInWindow(positions);
-            result.x = positions[0] + view.getWidth() / 2;
-            result.y = positions[1] + view.getHeight() / 2;
+        if (!canTouchFragmentWhileRunningAnimation()) {
+            setDisableFragmentTouch(true);
         }
-        return result;
     }
 
-    protected int onRequestAnimDuration() {
-        return ANIM_DURATION;
+    @Override
+    public void onAnimationEnd(@NonNull AnimExtras animExtras) {
+        setDisableFragmentTouch(false);
+        setFragmentOverlay(false);
+        mAnimExtras.removeAllListeners();
+        mAnimExtras = null;
     }
 
-    protected boolean onDisableTouchEventWhenAnimRunning() {
-        return true;
-    }
-
+    /* ---------- IBaseFragment ---------- */
     @Override
     public IKeyboardManager keyboardManager() {
         return mIBaseActivity.keyboardManager();
@@ -197,7 +189,13 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     @Override
-    public boolean onBackPressed() {
+    public final boolean onBackPressed() {
+        if (mAnimExtras != null) {
+            return true; // block when animation is running.
+        }
+        if (onHandleBackPressed()) {
+            return true; // child has handle back press.
+        }
         Fragment fragment = childExtraTransaction().getCurrentFragment();
         if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
             return true;
@@ -209,6 +207,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         return false;
     }
 
+    /* ---------- IBaseView ---------- */
     @Override
     public void showLoading() {
     }
@@ -221,35 +220,169 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     public void showError(Throwable t) {
     }
 
-    private void disableFragmentTouchInDuration(long duration) {
-        if (duration <= 0) {
-            return;
+    ///////////////////////////////////////////////////////////////////////////
+    // Protected area
+    ///////////////////////////////////////////////////////////////////////////
+
+    protected int getContainerId() {
+        return 0;
+    }
+
+    protected boolean onHandleBackPressed() {
+        return false;
+    }
+
+    protected boolean canShowOverlayWhileRunningAnimation() {
+        return true;
+    }
+
+    protected boolean canTouchFragmentWhileRunningAnimation() {
+        return false;
+    }
+
+    protected int getAnimationDuration() {
+        return ANIMATION_DURATION;
+    }
+
+    /**
+     * This function support for {@link CircularRevealAnimator} animator.<br/>
+     * You can override to modify the initial position of anim.<br/>
+     * Default center of the view.
+     */
+    @NonNull
+    protected Point getCircularPosition() {
+        Point result = new Point();
+        View view = getParentView();
+        if (view != null) {
+            int[] positions = new int[2];
+            view.getLocationInWindow(positions);
+            result.x = positions[0] + view.getWidth() / 2;
+            result.y = positions[1] + view.getHeight() / 2;
         }
-        setFragmentTouch(true);
-        postDelayed(() -> setFragmentTouch(false), duration);
+        return result;
+    }
+
+    @ColorInt
+    protected int getOverlayColor() {
+        return Color.argb(128, 0, 0, 0);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Private area
+    ///////////////////////////////////////////////////////////////////////////
+
+    @NonNull
+    private AnimOptionsData createAnimOptionsData(int nextAnim, boolean enter) {
+        AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
+        AnimOptionsData aod = new AnimOptionsData();
+        aod.setOptions(options);
+        aod.setDuration(getAnimationDuration());
+        aod.setEnter(enter);
+        if (options.getAnimType() == AnimType.ANIMATOR) {
+            View view = getView();
+            if (view.getParent() == null && view.getTag(R.id.tag_parent_view) == null) {
+                view.setTag(R.id.tag_parent_view, getParentView());
+            }
+            aod.setView(view);
+            if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
+                aod.setCircularPosition(getCircularPosition());
+            }
+        }
+        return aod;
+    }
+
+    private boolean getPopDirection() {
+        try {
+            Method method = Fragment.class.getDeclaredMethod("getPopDirection");
+            method.setAccessible(true);
+            return (boolean) method.invoke(this);
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    /* ---------- Overlays ---------- */
+    private View overlay;
+    private View touchOverlay;
+
+    private void setFragmentOverlay(boolean show) {
+        View overlay = getOverlay();
+        if (overlay != null) {
+            if (show) {
+                boolean isPop = getPopDirection();
+                overlay.setAlpha(isPop ? 1 : 0);
+                overlay.animate().alpha(isPop ? 0 : 1).start();
+                overlay.setVisibility(View.VISIBLE);
+            } else {
+                overlay.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setDisableFragmentTouch(boolean disable) {
+        View touchOverlay = getTouchOverlay();
+        if (touchOverlay != null) {
+            touchOverlay.setVisibility(disable ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private View getOverlay() {
+        if (overlay != null) {
+            return overlay;
+        }
+        View view = getParentView();
+        if (view.getTag(R.id.tag_overlay_view) != null) {
+            overlay = (View) view.getTag(R.id.tag_overlay_view);
+        } else {
+            overlay = getOverlayByTag("OverlayTag");
+            view.setTag(R.id.tag_overlay_view, overlay);
+            if (overlay != null) {
+                overlay.setBackgroundColor(getOverlayColor());
+                overlay.setElevation(OVERLAY_VIEW_ELEVATION);
+            }
+        }
+        return overlay;
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void setFragmentTouch(boolean disable) {
-        String tag = "disableTouchOverlayTagView";
+    private View getTouchOverlay() {
+        if (touchOverlay != null) {
+            return touchOverlay;
+        }
+        View view = getParentView();
+        if (view.getTag(R.id.tag_touch_overlay_view) != null) {
+            touchOverlay = (View) view.getTag(R.id.tag_touch_overlay_view);
+        } else {
+            touchOverlay = getOverlayByTag("TouchOverlayTag");
+            view.setTag(R.id.tag_touch_overlay_view, touchOverlay);
+            if (touchOverlay != null) {
+                touchOverlay.setElevation(DISABLE_TOUCH_OVERLAY_VIEW_ELEVATION);
+                touchOverlay.setOnTouchListener((v, event) -> true);
+            }
+        }
+        return touchOverlay;
+    }
+
+    private void clearOverlay() {
+        overlay = null;
+        touchOverlay = null;
+    }
+
+    @Nullable
+    private View getOverlayByTag(String tag) {
         View view = getParentView();
         if (view instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) view;
             View overlay = parent.findViewWithTag(tag);
-            if (disable) {
-                if (overlay == null) {
-                    overlay = new View(getContext());
-                    overlay.setTag(tag);
-                    overlay.setElevation(Float.MAX_VALUE);
-                    overlay.setOnTouchListener((v, event) -> true);
-                    parent.addView(overlay, new ViewGroup.LayoutParams(-1, -1));
-                }
-            } else {
-                if (overlay != null) {
-                    parent.removeView(overlay);
-                }
+            if (overlay == null) {
+                overlay = new View(getContext());
+                overlay.setTag(tag);
+                overlay.setVisibility(View.GONE);
+                parent.addView(overlay, new ViewGroup.LayoutParams(-1, -1));
             }
+            return overlay;
         }
+        return null;
     }
 
 }

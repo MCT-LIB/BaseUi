@@ -86,15 +86,15 @@ public class TestCircularRevealBodyFragment extends BaseFragment implements View
 
     @NonNull
     @Override
-    protected Point onRequestCircularPosition() {
+    protected Point getCircularPosition() {
         if (point != null) {
             return point;
         }
-        return super.onRequestCircularPosition();
+        return super.getCircularPosition();
     }
 
     @Override
-    protected int onRequestAnimDuration() {
+    protected int getAnimationDuration() {
         return 400;
     }
 }

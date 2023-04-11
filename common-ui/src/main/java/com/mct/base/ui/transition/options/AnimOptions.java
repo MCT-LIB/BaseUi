@@ -9,14 +9,44 @@ import com.mct.base.ui.transition.annotation.AnimatorStyle;
 
 public class AnimOptions {
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Converter area
+    ///////////////////////////////////////////////////////////////////////////
+
+    @NonNull
+    public static AnimOptions fromOptionsValue(int value) {
+        value = Math.abs(value);
+        return new AnimOptions.Builder()
+                .type(AnimOptionsStorage.TYPE.get(value))
+                .style(AnimOptionsStorage.STYLE.get(value))
+                .direction(AnimOptionsStorage.DIRECTION.get(value))
+                .overlay(AnimOptionsStorage.OVERLAY.get(value) != 0)
+                .build();
+    }
+
+    public static int toOptionsValue(@NonNull AnimOptions options) {
+        int value = 0;
+        value = AnimOptionsStorage.TYPE.set(value, options.animType);
+        value = AnimOptionsStorage.STYLE.set(value, options.animStyle);
+        value = AnimOptionsStorage.DIRECTION.set(value, options.animDirection);
+        value = AnimOptionsStorage.OVERLAY.set(value, options.animOverlay);
+        return -Math.abs(value);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Class area
+    ///////////////////////////////////////////////////////////////////////////
+
     private final int animType;
     private final int animStyle;
     private final int animDirection;
+    private final int animOverlay;
 
     private AnimOptions(@NonNull Builder builder) {
         this.animType = builder.animType;
         this.animStyle = builder.animStyle;
         this.animDirection = builder.animDirection;
+        this.animOverlay = builder.animOverlay;
     }
 
     @AnimType
@@ -33,27 +63,13 @@ public class AnimOptions {
         return animDirection;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Static & builder
-    ///////////////////////////////////////////////////////////////////////////
-
-    @NonNull
-    public static AnimOptions fromOptionsValue(int value) {
-        value = Math.abs(value);
-        return new AnimOptions.Builder()
-                .type(AnimOptionsStorage.TYPE.get(value))
-                .style(AnimOptionsStorage.STYLE.get(value))
-                .direction(AnimOptionsStorage.DIRECTION.get(value))
-                .build();
+    public boolean hasOverlay() {
+        return animOverlay != 0;
     }
 
-    public static int toOptionsValue(@NonNull AnimOptions options) {
-        int value = 0;
-        value = AnimOptionsStorage.TYPE.set(value, options.animType);
-        value = AnimOptionsStorage.STYLE.set(value, options.animStyle);
-        value = AnimOptionsStorage.DIRECTION.set(value, options.animDirection);
-        return -Math.abs(value);
-    }
+    ///////////////////////////////////////////////////////////////////////////
+    // Builder area
+    ///////////////////////////////////////////////////////////////////////////
 
     @NonNull
     public static Builder animation(@AnimationStyle int style) {
@@ -69,6 +85,7 @@ public class AnimOptions {
         private int animType;
         private int animStyle;
         private int animDirection;
+        private int animOverlay;
 
         private Builder() {
         }
@@ -85,6 +102,11 @@ public class AnimOptions {
 
         public Builder direction(@AnimDirection int animDirection) {
             this.animDirection = animDirection;
+            return this;
+        }
+
+        public Builder overlay(boolean animOverlay) {
+            this.animOverlay = animOverlay ? 1 : 0;
             return this;
         }
 
@@ -110,6 +132,10 @@ public class AnimOptions {
 
         public Builder right() {
             return this.direction(AnimDirection.RIGHT);
+        }
+
+        public Builder overlay() {
+            return this.overlay(true);
         }
 
         public AnimOptions build() {

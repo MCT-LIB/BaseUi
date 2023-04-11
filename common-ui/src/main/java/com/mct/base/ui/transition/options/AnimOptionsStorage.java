@@ -2,8 +2,8 @@ package com.mct.base.ui.transition.options;
 
 enum AnimOptionsStorage {
 
-    // current use 8 bit of int
-    TYPE(1), STYLE(4), DIRECTION(3);
+    // current use 9 bit of int
+    TYPE(1), STYLE(4), DIRECTION(3), OVERLAY(1);
 
     static {
         int bitSum = 0;
