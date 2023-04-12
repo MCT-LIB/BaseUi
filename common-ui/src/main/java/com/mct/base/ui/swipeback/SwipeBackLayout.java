@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.R;
 import com.mct.base.ui.core.IBaseFragment;
+import com.mct.base.ui.core.IExtraTransaction;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -486,7 +487,10 @@ public class SwipeBackLayout extends FrameLayout {
                     if (!mFragment.isDetached()) {
                         onDragFinished();
                         mFragment.pendingPreventAnimation();
-                        mFragment.extraTransaction().popFragment();
+                        IExtraTransaction transaction = mFragment.getParentFragment() != null
+                                ? mFragment.parentExtraTransaction()
+                                : mFragment.extraTransaction();
+                        transaction.popFragment();
                     }
                 }
             }
