@@ -30,8 +30,6 @@ public class TestTransactionFragment extends SwipeBackFragment {
 
         childExtraTransaction().replaceFragment(new TestTransactionBodyFragment());
 
-        setEdgeLevel(SwipeBackLayout.EdgeLevel.MAX);
-        setParallaxOffset(0.5f);
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -126,6 +125,7 @@ public class SwipeBackLayout extends FrameLayout {
 
     private void init() {
         mHelper = ViewDragHelper.create(this, new ViewDragCallback());
+        setEdgeLevel(EdgeLevel.MAX);
         setEdgeOrientation(EDGE_LEFT);
     }
 
@@ -404,7 +404,6 @@ public class SwipeBackLayout extends FrameLayout {
 
         @Override
         public boolean tryCaptureView(@NonNull View child, int pointerId) {
-            Log.e("ddd", "tryCaptureView: ");
             boolean dragEnable = mHelper.isEdgeTouched(mEdgeFlag, pointerId);
             if (dragEnable) {
                 if (mHelper.isEdgeTouched(EDGE_LEFT, pointerId)) {
@@ -476,7 +475,9 @@ public class SwipeBackLayout extends FrameLayout {
 
             if (mScrollPercent > 1) {
                 if (mFragment != null) {
-                    if (mCallOnDestroyView) return;
+                    if (mCallOnDestroyView) {
+                        return;
+                    }
 
                     if (mPreFragment instanceof IBaseFragment) {
                         ((IBaseFragment) mPreFragment).pendingPreventAnimation();

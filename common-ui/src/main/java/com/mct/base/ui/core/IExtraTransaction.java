@@ -61,11 +61,11 @@ public interface IExtraTransaction {
     /**
      * @param targetFragment pop to fragment if has
      */
-    void popToFragment(@NonNull Class<? extends Fragment> targetFragment);
+    void popFragmentTo(@NonNull Class<? extends Fragment> targetFragment);
 
     /**
      * @param targetFragment pop to fragment if has
      */
-    void popToFragment(@NonNull Class<? extends Fragment> targetFragment, boolean includeTargetFragment);
+    void popFragmentTo(@NonNull Class<? extends Fragment> targetFragment, boolean includeTargetFragment);
 
 }

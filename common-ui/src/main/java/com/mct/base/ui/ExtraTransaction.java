@@ -170,7 +170,6 @@ class ExtraTransaction implements IExtraTransaction {
         }
     }
 
-
     @Override
     public void popFragmentToPosition(int position) {
         performHideSoftInput();
@@ -194,12 +193,12 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     @Override
-    public void popToFragment(@NonNull Class<? extends Fragment> targetFragment) {
-        popToFragment(targetFragment, false);
+    public void popFragmentTo(@NonNull Class<? extends Fragment> targetFragment) {
+        popFragmentTo(targetFragment, false);
     }
 
     @Override
-    public void popToFragment(@NonNull Class<? extends Fragment> targetFragment, boolean includeTargetFragment) {
+    public void popFragmentTo(@NonNull Class<? extends Fragment> targetFragment, boolean includeTargetFragment) {
         performHideSoftInput();
         int flag = includeTargetFragment ? FragmentManager.POP_BACK_STACK_INCLUSIVE : 0;
         boolean isPopped = mFragmentManager.popBackStackImmediate(targetFragment.getName(), flag);
