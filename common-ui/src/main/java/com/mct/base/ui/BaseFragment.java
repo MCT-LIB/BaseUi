@@ -101,7 +101,9 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
         // update elevation before running animation
         int e = VIEW_ELEVATION;
-        getView().setElevation(getPopDirection() ? enter ? -e : e : enter ? e : -e);
+        if (getView() != null) {
+            getView().setElevation(getPopDirection() ? enter ? -e : e : enter ? e : -e);
+        }
 
         if (transit == 0 && nextAnim <= 0) {
             AnimOptions options = AnimOptions.fromOptionsValue(nextAnim);
@@ -296,6 +298,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         aod.setEnter(enter);
         if (options.getAnimType() == AnimType.ANIMATOR) {
             View view = getView();
+            assert view != null;
             if (view.getParent() == null && view.getTag(R.id.tag_parent_view) == null) {
                 view.setTag(R.id.tag_parent_view, getParentView());
             }
@@ -311,7 +314,8 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         try {
             Method method = Fragment.class.getDeclaredMethod("getPopDirection");
             method.setAccessible(true);
-            return (boolean) method.invoke(this);
+            Boolean result = (Boolean) method.invoke(this);
+            return result != null && result;
         } catch (Throwable ignored) {
             return false;
         }

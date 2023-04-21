@@ -44,9 +44,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new Handler(getMainLooper());
-        mBaseActivity = new BaseActivityWrapper();
-        mKeyboardManager = new KeyboardManagerWrapper();
-        mIExtraTransaction = new ExtraTransaction(getContainerId(), getSupportFragmentManager(), mKeyboardManager);
     }
 
     private boolean mIsBackPressed;
@@ -76,16 +73,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     // Impl
     ///////////////////////////////////////////////////////////////////////////
 
-
     public IBaseActivity getBaseActivity() {
+        if (mBaseActivity == null) {
+            mBaseActivity = new BaseActivityWrapper();
+        }
         return mBaseActivity;
     }
 
     protected IKeyboardManager getKeyboardManager() {
+        if (mKeyboardManager == null) {
+            mKeyboardManager = new KeyboardManagerWrapper();
+        }
         return mKeyboardManager;
     }
 
     protected IExtraTransaction extraTransaction() {
+        if (mIExtraTransaction == null) {
+            mIExtraTransaction = new ExtraTransaction(getContainerId(), getSupportFragmentManager(), getKeyboardManager());
+        }
         return mIExtraTransaction;
     }
 
