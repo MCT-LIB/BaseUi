@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -80,6 +81,14 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     @Override
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
         return mAnimExtras.animator;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (!canTouchThroughBelowFragment()) {
+            view.setClickable(true);
+        }
     }
 
     @Override
@@ -255,6 +264,10 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     protected boolean canTouchFragmentWhileRunningAnimation() {
+        return false;
+    }
+
+    protected boolean canTouchThroughBelowFragment() {
         return false;
     }
 
