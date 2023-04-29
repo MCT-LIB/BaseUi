@@ -220,12 +220,12 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         if (mAnimExtras != null) {
             return true; // block when animation is running.
         }
-        if (onHandleBackPressed()) {
-            return true; // child has handle back press.
-        }
         Fragment fragment = childExtraTransaction().getCurrentFragment();
         if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
             return true;
+        }
+        if (onHandleBackPressed()) {
+            return true; // has handle back press.
         }
         if (childExtraTransaction().getBackStackCount() != 0) {
             childExtraTransaction().popFragment();
