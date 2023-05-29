@@ -87,7 +87,7 @@ public class SwipeBackFragment extends BaseFragment {
 
     @SuppressWarnings("resource")
     protected int getWindowBackground() {
-        TypedArray a = getActivity().getTheme().obtainStyledAttributes(new int[]{
+        TypedArray a = requireContext().getTheme().obtainStyledAttributes(new int[]{
                 android.R.attr.windowBackground
         });
         int background = a.getResourceId(0, 0);
