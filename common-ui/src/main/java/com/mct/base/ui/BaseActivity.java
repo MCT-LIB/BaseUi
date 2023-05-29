@@ -80,7 +80,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return mBaseActivity;
     }
 
-    protected IKeyboardManager getKeyboardManager() {
+    protected IKeyboardManager keyboardManager() {
         if (mKeyboardManager == null) {
             mKeyboardManager = new KeyboardManagerWrapper();
         }
@@ -89,7 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected IExtraTransaction extraTransaction() {
         if (mIExtraTransaction == null) {
-            mIExtraTransaction = new ExtraTransaction(getContainerId(), getSupportFragmentManager(), getKeyboardManager());
+            mIExtraTransaction = new ExtraTransaction(getContainerId(), getSupportFragmentManager(), keyboardManager());
         }
         return mIExtraTransaction;
     }
@@ -200,7 +200,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         @Override
         public IKeyboardManager keyboardManager() {
-            return BaseActivity.this.getKeyboardManager();
+            return BaseActivity.this.keyboardManager();
         }
 
         @Override
