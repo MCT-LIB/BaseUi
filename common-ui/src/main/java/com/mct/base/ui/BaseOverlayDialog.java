@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.ColorInt;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
@@ -25,39 +26,72 @@ import com.mct.base.ui.utils.ScreenUtils;
 public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
 
     private static final String TAG = "MCT_B_Dialog";
+
+    /**
+     * A Context object used to create the dialog.
+     */
     protected Context mContext;
+
     /**
      * The Android InputMethodManger, for ensuring the keyboard dismiss on dialog dismiss.
      */
     private final InputMethodManager mInputManager;
 
+    /**
+     * The View currently being displayed by the dialog.
+     * Initially, the value of mView is null and will be set
+     * when method {@link #onCreateView(LayoutInflater)} called.
+     */
+    private View mView = null;
+
+    /**
+     * The AlertDialog currently being displayed by this controller.
+     * Initially, the value of mDialog is null and will be set
+     * when method {@link #onCreateDialog()} called.
+     */
+    private AlertDialog mDialog = null;
+
+    /**
+     * Constructor
+     *
+     * @param context A Context object used to create the dialog.
+     */
     public BaseOverlayDialog(@NonNull Context context) {
         mContext = context;
         mInputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     /**
-     * The dialog currently displayed by this controller.
-     * Null until [onCreate] is called, or if it has been dismissed.
+     * An abstract method to create a View for the dialog.
+     * This method is called in the {@link #onCreateDialog()} method.
+     *
+     * @param inflater helper inflater
+     * @return a View to be displayed by the dialog.
      */
-    private AlertDialog mDialog = null;
+    protected abstract View onCreateView(@NonNull LayoutInflater inflater);
 
     /**
-     * Creates the dialog shown by this controller.
-     * Note that the cancelable value and the dismiss listener will be overridden
-     * with internal values once, so any values for them defined here will not be kept.
-     *
-     * @return the builder for the dialog to be created.
+     * An abstract method to create an AlertDialog.Builder for the dialog.
+     * This method is called in the @{link onCreate()} method and returns an AlertDialog.Builder
+     * to be used to create an AlertDialog.
      */
     @NonNull
-    protected abstract AlertDialog.Builder onCreateDialog(@NonNull LayoutInflater inflater);
+    protected abstract AlertDialog.Builder onCreateDialog();
 
-    protected abstract void onDialogCreated(@NonNull AlertDialog dialog, @NonNull View root);
+    /**
+     * An abstract method called after the dialog is created.
+     * This method provides the subclass with an opportunity to perform any
+     * necessary operations on the dialog and View that was created.
+     *
+     * @param dialog the dialog was created
+     * @param view   the view was created
+     */
+    protected abstract void onDialogCreated(@NonNull AlertDialog dialog, View view);
 
     /**
      * Creates the dialog option
      *
-     * @return The option can be modify th dialog window
+     * @return The option can be modify the dialog window
      */
     @Nullable
     protected abstract DialogOption onCreateDialogOption();
@@ -71,17 +105,21 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
         };
         DialogInterface.OnKeyListener onKeyListener = (d, i, e) -> {
             if (e.getKeyCode() == KeyEvent.KEYCODE_BACK && e.getAction() == KeyEvent.ACTION_UP) {
-                dismiss();
+                if (!onBackPressed()) {
+                    dismiss();
+                }
                 return true;
             }
             return false;
         };
-        mDialog = onCreateDialog(LayoutInflater.from(mContext))
+        mView = onCreateView(LayoutInflater.from(mContext));
+        mDialog = onCreateDialog()
+                .setView(mView)
                 .setOnDismissListener(onDismissListener)
                 .setOnKeyListener(onKeyListener)
                 .create();
         initWindow(mDialog.getWindow(), onCreateDialogOption());
-        onDialogCreated(mDialog, mDialog.getWindow().getDecorView());
+        onDialogCreated(mDialog, mView);
     }
 
     @Override
@@ -118,6 +156,44 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
         hideSoftInput();
     }
 
+    @Nullable
+    public AlertDialog getDialog() {
+        return mDialog;
+    }
+
+    @Nullable
+    public View getView() {
+        return mView;
+    }
+
+    public <T extends View> T findViewById(@IdRes int id) {
+        return mView.findViewById(id);
+    }
+
+    @NonNull
+    public final <T extends View> T requireViewById(@IdRes int id) {
+        T view = findViewById(id);
+        if (view == null) {
+            throw new IllegalArgumentException("ID does not reference a View inside this Window");
+        }
+        return view;
+    }
+
+    /**
+     * Show the soft keyboard.
+     */
+    public void showSoftInput(@NonNull View view) {
+        view.requestFocus();
+        mInputManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    /**
+     * Hide the soft keyboard.
+     */
+    public void hideSoftInput() {
+        mInputManager.hideSoftInputFromWindow(mDialog.getWindow().getDecorView().getWindowToken(), 0);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // PROTECTED AREA < can override to set or change property >
     ///////////////////////////////////////////////////////////////////////////
@@ -140,11 +216,21 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
     }
 
     /**
+     * Handle backPress if need
+     *
+     * @return true if have handle backPress.
+     */
+    protected boolean onBackPressed() {
+        return false;
+    }
+
+    /**
      * Handle the dialog dismissing.
      */
     @CallSuper
     protected void onDialogDismissed() {
         isShowing = false;
+        mView = null;
         mDialog = null;
         mContext = null;
     }
@@ -185,12 +271,6 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
         onInitWindow(window);
     }
 
-    /**
-     * Hide the software keyboard.
-     */
-    private void hideSoftInput() {
-        mInputManager.hideSoftInputFromWindow(mDialog.getWindow().getDecorView().getWindowToken(), 0);
-    }
 
     public static class DialogOption {
         public static final int UNSET = 0;

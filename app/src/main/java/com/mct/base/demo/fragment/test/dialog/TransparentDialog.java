@@ -17,9 +17,14 @@ public class TransparentDialog extends BaseOverlayDialog {
         super(context);
     }
 
+    @Override
+    protected View onCreateView(@NonNull LayoutInflater inflater) {
+        return null;
+    }
+
     @NonNull
     @Override
-    protected AlertDialog.Builder onCreateDialog(@NonNull LayoutInflater inflater) {
+    protected AlertDialog.Builder onCreateDialog() {
         return new AlertDialog.Builder(mContext)
                 .setTitle(getClass().getSimpleName())
                 .setMessage("Lorem Ipsum is simply dummy text of the printing and typesetting industry.")
