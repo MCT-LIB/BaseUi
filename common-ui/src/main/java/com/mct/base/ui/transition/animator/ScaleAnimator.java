@@ -2,7 +2,6 @@ package com.mct.base.ui.transition.animator;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
@@ -56,8 +55,6 @@ public class ScaleAnimator extends ViewPropertyAnimator {
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
             AnimatorSet alphaSet = new AnimatorSet();
-            Log.e("ddd", "ScaleUpAnimator initialAnimator: " + mEnter);
-            setDuration(300);
             if (mEnter) {
                 alphaSet.playSequentially(
                         ObjectAnimator.ofFloat(target, "alpha", 0, 0).setDuration(getDuration() - 150),
@@ -87,7 +84,6 @@ public class ScaleAnimator extends ViewPropertyAnimator {
         @Override
         protected void initialAnimator(View target, AnimatorSet animator) {
             super.initialAnimator(target, animator);
-            Log.e("ddd", "ScaleDownAnimator initialAnimator: " + mEnter);
             if (mEnter) {
                 ObjectAnimator alpha = ObjectAnimator.ofFloat(target, "alpha", 1f).setDuration(50);
                 ObjectAnimator scaleX = ObjectAnimator.ofFloat(target, "scaleX", 1.2f, 1f);
