@@ -80,6 +80,9 @@ class ExtraTransaction implements IExtraTransaction {
         performHideSoftInput();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transition.applyTransition(transaction);
+        if (getCurrentFragment() != null) {
+            transaction.hide(getCurrentFragment());
+        }
         transaction.add(mContainerId, fragment, fragment.getClass().getName());
         transaction.addToBackStack(fragment.getClass().getName());
         mFragmentIds.add(transaction.commit());

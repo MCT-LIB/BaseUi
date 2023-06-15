@@ -23,6 +23,13 @@ public abstract class FragmentTransitionFactory {
     }
 
     @NonNull
+    public static FragmentTransition createTransitScaleTransition() {
+        AnimOptions scaleUp = AnimOptions.animator(AnimatorStyle.SCALE).up().build();
+        AnimOptions scaleDown = AnimOptions.animator(AnimatorStyle.SCALE).down().build();
+        return createTransition(scaleUp, scaleUp, scaleDown, scaleDown);
+    }
+
+    @NonNull
     public static FragmentTransition createTransition(@Nullable AnimOptions enter,
                                                       @Nullable AnimOptions exit) {
         return createTransition(enter, exit, null, null);

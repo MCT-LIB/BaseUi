@@ -41,6 +41,7 @@ import com.mct.base.ui.transition.animator.FadeAnimator;
 import com.mct.base.ui.transition.animator.MoveAnimator;
 import com.mct.base.ui.transition.animator.NoneAnimator;
 import com.mct.base.ui.transition.animator.RotateAnimator;
+import com.mct.base.ui.transition.animator.ScaleAnimator;
 import com.mct.base.ui.transition.annotation.AnimType;
 import com.mct.base.ui.transition.annotation.AnimatorStyle;
 import com.mct.base.ui.transition.options.AnimExtras;
@@ -147,13 +148,25 @@ public class FragmentTransitionAnimFactory {
 
         // @formatter:off
         switch (style) {
-            case AnimatorStyle.NONE:            return NoneAnimator.create(view, duration);
-            case AnimatorStyle.MOVE:            return MoveAnimator.create(view, direction, enter, duration);
-            case AnimatorStyle.FADE:            return FadeAnimator.create(view, enter, duration);
-            case AnimatorStyle.CIRCULAR_REVEAL: return CircularRevealAnimator.create(view, enter, duration, center.x, center.y);
-            case AnimatorStyle.ROTATE:          return RotateAnimator.create(view, direction, enter,duration).fading(enter ? 0f : 1f, enter ? 1f : 0f);
-            case AnimatorStyle.ROTATE_UP:       return RotateAnimator.createRotateUp(view, direction, enter,duration).fading(enter ? 0.3f : 1f, enter ? 1f : 0.3f);
-            case AnimatorStyle.ROTATE_DOWN:     return RotateAnimator.createRotateDown(view, direction, enter,duration).fading(enter ? 0.3f : 1f, enter ? 1f : 0.3f);
+            case AnimatorStyle.NONE:
+                return NoneAnimator.create(view, duration);
+            case AnimatorStyle.MOVE:
+                return MoveAnimator.create(view, direction, enter, duration);
+            case AnimatorStyle.FADE:
+                return FadeAnimator.create(view, enter, duration);
+            case AnimatorStyle.CIRCULAR_REVEAL:
+                return CircularRevealAnimator.create(view, enter, duration, center.x, center.y);
+            case AnimatorStyle.ROTATE:
+                return RotateAnimator.create(view, direction, enter,duration)
+                        .fading(enter ? 0f : 1f, enter ? 1f : 0f);
+            case AnimatorStyle.ROTATE_UP:
+                return RotateAnimator.createRotateUp(view, direction, enter, duration)
+                        .fading(enter ? 0.3f : 1f, enter ? 1f : 0.3f);
+            case AnimatorStyle.ROTATE_DOWN:
+                return RotateAnimator.createRotateDown(view, direction, enter, duration)
+                        .fading(enter ? 0.3f : 1f, enter ? 1f : 0.3f);
+            case AnimatorStyle.SCALE:
+                return ScaleAnimator.create(view, direction, enter, duration);
         }
         // @formatter:on
         return create(Animator.class);
