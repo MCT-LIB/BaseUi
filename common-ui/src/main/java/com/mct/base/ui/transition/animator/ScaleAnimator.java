@@ -57,17 +57,17 @@ public class ScaleAnimator extends ViewPropertyAnimator {
             AnimatorSet alphaSet = new AnimatorSet();
             if (mEnter) {
                 alphaSet.playSequentially(
-                        ObjectAnimator.ofFloat(target, "alpha", 0, 0).setDuration(getDuration() - 150),
+                        ObjectAnimator.ofFloat(target, "alpha", 0, 0).setDuration(66),
                         ObjectAnimator.ofFloat(target, "alpha", 0, 1).setDuration(50)
                 );
                 animator.playTogether(alphaSet);
             } else {
                 alphaSet.playSequentially(
-                        ObjectAnimator.ofFloat(target, "alpha", 1, 1).setDuration(getDuration() - 100),
+                        ObjectAnimator.ofFloat(target, "alpha", 1, 1).setDuration(66),
                         ObjectAnimator.ofFloat(target, "alpha", 1, 0).setDuration(50)
                 );
-                ObjectAnimator scaleX = ObjectAnimator.ofFloat(target, "scaleX", 1f, 1.2f);
-                ObjectAnimator scaleY = ObjectAnimator.ofFloat(target, "scaleY", 1f, 1.2f);
+                ObjectAnimator scaleX = ObjectAnimator.ofFloat(target, "scaleX", 1f, 1.15f);
+                ObjectAnimator scaleY = ObjectAnimator.ofFloat(target, "scaleY", 1f, 1.15f);
                 scaleX.setInterpolator(new FastOutLinearInInterpolator());
                 scaleY.setInterpolator(new FastOutLinearInInterpolator());
                 animator.playTogether(alphaSet, scaleX, scaleY);

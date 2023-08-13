@@ -130,8 +130,10 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     public void onAnimationEnd(@NonNull AnimExtras animExtras) {
         setDisableFragmentTouch(false);
         setFragmentOverlay(false);
-        mAnimExtras.removeAllListeners();
-        mAnimExtras = null;
+        if (mAnimExtras != null) {
+            mAnimExtras.removeAllListeners();
+            mAnimExtras = null;
+        }
     }
 
     /* ---------- IBaseFragment ---------- */
