@@ -34,7 +34,8 @@ public class TestDialogFragment extends BaseFragment implements View.OnClickList
 
         view.findViewById(R.id.btn_dialog_Normal).setOnClickListener(this);
         view.findViewById(R.id.btn_dialog_Rounded).setOnClickListener(this);
-        view.findViewById(R.id.btn_dialog_Transparent).setOnClickListener(this);
+        view.findViewById(R.id.btn_bts_dialog_Normal).setOnClickListener(this);
+        view.findViewById(R.id.btn_bts_dialog_Rounded).setOnClickListener(this);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -42,13 +43,16 @@ public class TestDialogFragment extends BaseFragment implements View.OnClickList
     public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.btn_dialog_Normal:
-                new NormalDialog(requireContext()).create(null);
+                new NormalDialog(requireContext()).setLifecycle(getLifecycle()).show();
                 break;
             case R.id.btn_dialog_Rounded:
-                new RoundedCornerDialog(requireContext()).create(null);
+                new RoundedCornerDialog(requireContext()).show();
                 break;
-            case R.id.btn_dialog_Transparent:
-                new TransparentDialog(requireContext()).create(null);
+            case R.id.btn_bts_dialog_Normal:
+                new NormalBottomSheet(requireContext()).show();
+                break;
+            case R.id.btn_bts_dialog_Rounded:
+                new RoundedCornerBottomSheet(requireContext()).show();
                 break;
         }
     }

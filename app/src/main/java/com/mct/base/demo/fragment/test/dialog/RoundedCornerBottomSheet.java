@@ -8,46 +8,41 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialog;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.mct.base.demo.R;
 import com.mct.base.ui.BaseOverlayDialog;
 import com.mct.base.ui.utils.ScreenUtils;
 
-public class RoundedCornerDialog extends BaseOverlayDialog {
+public class RoundedCornerBottomSheet extends BaseOverlayDialog {
 
-    public RoundedCornerDialog(@NonNull Context context) {
+    public RoundedCornerBottomSheet(@NonNull Context context) {
         super(context);
     }
 
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater) {
-        return null;
+        return inflater.inflate(R.layout.bts_test, null);
     }
 
     @Override
     protected AppCompatDialog onCreateDialog(Context context) {
-        return new AlertDialog.Builder(context)
-                .setTitle(getClass().getSimpleName())
-                .setMessage("Lorem Ipsum is simply dummy text of the printing and typesetting industry.")
-                .setPositiveButton("Ok", (dialog, which) -> dismiss())
-                .create();
+        return new BottomSheetDialog(context);
     }
 
     @Override
     protected void onDialogCreated(@NonNull AppCompatDialog dialog, View view) {
-
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(Color.WHITE);
+        drawable.setCornerRadius(ScreenUtils.dp2px(16f));
+        view.setBackground(drawable);
     }
 
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(Color.WHITE);
-        drawable.setCornerRadius(ScreenUtils.dp2px(16));
-        return new DialogOption.Builder()
-                .setWindowBackground(drawable)
-                .build();
+        return null;
     }
 
 }

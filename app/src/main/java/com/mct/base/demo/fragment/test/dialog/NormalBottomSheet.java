@@ -6,29 +6,26 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialog;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.mct.base.demo.R;
 import com.mct.base.ui.BaseOverlayDialog;
 
-public class NormalDialog extends BaseOverlayDialog {
+public class NormalBottomSheet extends BaseOverlayDialog {
 
-    public NormalDialog(@NonNull Context context) {
+    public NormalBottomSheet(@NonNull Context context) {
         super(context);
     }
 
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater) {
-        return null;
+        return inflater.inflate(R.layout.bts_test, null);
     }
 
     @Override
     protected AppCompatDialog onCreateDialog(Context context) {
-        return new AlertDialog.Builder(context)
-                .setTitle(getClass().getSimpleName())
-                .setMessage("Lorem Ipsum is simply dummy text of the printing and typesetting industry.")
-                .setPositiveButton("Ok", (dialog, which) -> dismiss())
-                .create();
+        return new BottomSheetDialog(context);
     }
 
     @Override
@@ -38,6 +35,7 @@ public class NormalDialog extends BaseOverlayDialog {
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        return new DialogOption.Builder().build();
+        return null;
     }
+
 }

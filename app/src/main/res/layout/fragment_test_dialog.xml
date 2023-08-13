@@ -38,10 +38,17 @@
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_dialog_Transparent"
+            android:id="@+id/btn_bts_dialog_Normal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Transparent"
+            android:text="Bottom Sheet Normal"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_bts_dialog_Rounded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bottom Sheet Rounded"
             android:textAllCaps="false" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
