@@ -1,8 +1,6 @@
 package com.mct.base.demo.fragment.test.dialog;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -12,7 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialog;
 
 import com.mct.base.ui.BaseOverlayDialog;
-import com.mct.base.ui.utils.ScreenUtils;
 
 public class RoundedCornerDialog extends BaseOverlayDialog {
 
@@ -36,17 +33,13 @@ public class RoundedCornerDialog extends BaseOverlayDialog {
 
     @Override
     protected void onDialogCreated(@NonNull AppCompatDialog dialog, View view) {
-
     }
 
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(Color.WHITE);
-        drawable.setCornerRadius(ScreenUtils.dp2px(16));
         return new DialogOption.Builder()
-                .setWindowBackground(drawable)
+                .setCornerRadius(16)
                 .build();
     }
 

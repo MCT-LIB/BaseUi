@@ -1,7 +1,8 @@
 package com.mct.base.ui;
 
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,27 +22,15 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.shape.ShapeAppearanceModel;
+import com.mct.base.ui.utils.ScreenUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * <b>Note:</b><i>The BottomSheetDialog can't use DialogOption.setWindowBackground</i><br/>
- * <b>Theme Transparent for bottom sheet</b>
- * <pre>
- * &lt;style name="YourTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar"&gt;
- *      &lt;item name="bottomSheetDialogTheme"&gt;@style/BottomSheetDialogTheme&lt;/item&gt;
- * &lt;/style&gt;
- *
- * &lt;style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog"&gt;
- *      &lt;item name="bottomSheetStyle"&gt;@style/BottomSheetStyle&lt;/item&gt;
- * &lt;/style&gt;
- *
- * &lt;style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal"&gt;
- *      &lt;!-- Custom background --&gt;
- *      &lt;item name="android:background"&gt;@android:color/transparent&lt;/item&gt;
- * &lt;/style&gt;
- * </pre>
- */
+@SuppressWarnings("unused")
 public abstract class BaseOverlayDialog implements LifecycleEventObserver {
 
     private final Context mContext;
@@ -245,7 +234,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         return mContext;
     }
 
-    public View getView() {
+    protected final View getView() {
         return mView;
     }
 
@@ -295,39 +284,65 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
 
     private void createDialogIfNecessary() {
         if (mDialog == null) {
-            DialogInterface.OnDismissListener onDismissListener = d -> {
-                dismiss();
-                hideSoftInput();
-            };
-            DialogInterface.OnKeyListener onKeyListener = (d, i, e) -> {
-                if (e.getKeyCode() == KeyEvent.KEYCODE_BACK && e.getAction() == KeyEvent.ACTION_UP) {
-                    if (!onBackPressed()) {
-                        dismiss();
-                    }
-                    return true;
-                }
-                return false;
-            };
             mView = onCreateView(LayoutInflater.from(mContext));
             mDialog = onCreateDialog(mContext);
-            mDialog.setOnDismissListener(onDismissListener);
-            mDialog.setOnKeyListener(onKeyListener);
-            if (mView != null) {
-                if (mDialog instanceof AlertDialog) {
-                    ((AlertDialog) mDialog).setView(mView);
-                } else {
-                    mDialog.setContentView(mView);
-                }
+            DialogOption option = onCreateDialogOption();
+            if (option == null) {
+                option = new DialogOption.Builder().build();
             }
-            initWindow(mDialog.getWindow(), onCreateDialogOption());
+            initDialog(mDialog, mView, option);
+            initWindow(mDialog.getWindow(), option);
             onDialogCreated(mDialog, mView);
         }
     }
 
-    private void initWindow(Window window, DialogOption opt) {
-        if (opt == null) {
-            opt = new DialogOption.Builder().build();
+    private void initDialog(@NonNull AppCompatDialog dialog, @Nullable View view, @NonNull DialogOption opt) {
+        // dismiss listener
+        dialog.setOnDismissListener(d -> {
+            dismiss();
+            hideSoftInput();
+        });
+        // back pressed
+        dialog.setOnKeyListener((d, i, e) -> {
+            if (i == KeyEvent.KEYCODE_BACK || i == KeyEvent.KEYCODE_ESCAPE) {
+                if (!onBackPressed()) {
+                    dismiss();
+                }
+                return true;
+            }
+            return false;
+        });
+        // background
+        Window window = dialog.getWindow();
+        window.getDecorView().post(() -> {
+            int contentViewIdRes;
+            boolean roundedBottomCorners;
+            if (dialog instanceof BottomSheetDialog) {
+                contentViewIdRes = com.google.android.material.R.id.design_bottom_sheet;
+                roundedBottomCorners = false;
+            } else {
+                contentViewIdRes = Window.ID_ANDROID_CONTENT;
+                roundedBottomCorners = true;
+            }
+            View contentView = window.findViewById(contentViewIdRes);
+            if (contentView != null) {
+                contentView.setClipToOutline(true);
+                contentView.setBackground(opt.shapeAppearanceModel != null
+                        ? createPopupDrawable(mContext, opt.shapeAppearanceModel)
+                        : createPopupDrawable(mContext, opt.cornerRadius, roundedBottomCorners));
+            }
+        });
+        // content
+        if (view != null) {
+            if (dialog instanceof AlertDialog) {
+                ((AlertDialog) dialog).setView(view);
+            } else {
+                dialog.setContentView(view);
+            }
         }
+    }
+
+    private void initWindow(@NonNull Window window, @NonNull DialogOption opt) {
         // overlay
         if (opt.type != DialogOption.UNSET) {
             window.setType(opt.type);
@@ -337,9 +352,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
             window.getAttributes().windowAnimations = opt.windowAnimation;
         }
         // background
-        if (opt.windowBackground != null) {
-            window.setBackgroundDrawable(opt.windowBackground);
-        }
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         // soft input
         window.setSoftInputMode(opt.softInputMode);
         // auto hide soft input
@@ -353,6 +366,25 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         onInitWindow(window);
     }
 
+    @NonNull
+    private static Drawable createPopupDrawable(Context context, int radius, boolean roundedBottomCorners) {
+        float cornerRadius = ScreenUtils.dp2px(radius);
+        float bottomCornerRadius = roundedBottomCorners ? cornerRadius : 0;
+        return createPopupDrawable(context, ShapeAppearanceModel.builder()
+                .setTopLeftCornerSize(cornerRadius)
+                .setTopRightCornerSize(cornerRadius)
+                .setBottomLeftCornerSize(bottomCornerRadius)
+                .setBottomRightCornerSize(bottomCornerRadius)
+                .build());
+    }
+
+    @NonNull
+    private static Drawable createPopupDrawable(Context context, ShapeAppearanceModel shapeAppearanceModel) {
+        MaterialShapeDrawable popupDrawable = MaterialShapeDrawable.createWithElevationOverlay(context);
+        popupDrawable.setShapeAppearanceModel(shapeAppearanceModel);
+        return popupDrawable;
+    }
+
     public static class DialogOption {
 
         public static final int UNSET = 0;
@@ -360,25 +392,29 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         int type;
         int softInputMode;
         int windowAnimation;
-        Drawable windowBackground;
+        int cornerRadius;
+        ShapeAppearanceModel shapeAppearanceModel;
 
         private DialogOption(@NonNull Builder builder) {
             this.type = builder.type;
             this.softInputMode = builder.softInputMode;
             this.windowAnimation = builder.windowAnimation;
-            this.windowBackground = builder.windowBackground;
+            this.cornerRadius = builder.cornerRadius;
+            this.shapeAppearanceModel = builder.shapeAppearanceModel;
         }
 
         public static class Builder {
             private int type;
             private int softInputMode;
             private int windowAnimation;
-            private Drawable windowBackground;
+            private int cornerRadius;
+            ShapeAppearanceModel shapeAppearanceModel;
 
             public Builder() {
                 type = UNSET;
                 windowAnimation = UNSET;
-                windowBackground = null;
+                cornerRadius = UNSET;
+                shapeAppearanceModel = null;
                 softInputMode = LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN;
             }
 
@@ -397,8 +433,13 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
                 return this;
             }
 
-            public Builder setWindowBackground(Drawable windowBackground) {
-                this.windowBackground = windowBackground;
+            public Builder setCornerRadius(int cornerRadius) {
+                this.cornerRadius = cornerRadius;
+                return this;
+            }
+
+            public Builder setShapeAppearance(ShapeAppearanceModel shapeAppearanceModel) {
+                this.shapeAppearanceModel = shapeAppearanceModel;
                 return this;
             }
 

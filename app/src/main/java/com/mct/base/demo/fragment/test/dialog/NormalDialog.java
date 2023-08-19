@@ -38,6 +38,6 @@ public class NormalDialog extends BaseOverlayDialog {
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        return new DialogOption.Builder().build();
+        return null;
     }
 }
