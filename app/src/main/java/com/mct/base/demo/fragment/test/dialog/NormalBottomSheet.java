@@ -1,6 +1,8 @@
 package com.mct.base.demo.fragment.test.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -18,6 +20,7 @@ public class NormalBottomSheet extends BaseOverlayDialog {
         super(context);
     }
 
+    @SuppressLint("InflateParams")
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater) {
         return inflater.inflate(R.layout.bts_test, null);
@@ -35,7 +38,9 @@ public class NormalBottomSheet extends BaseOverlayDialog {
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        return null;
+        return new DialogOption.Builder()
+                .setBackgroundColor(Color.WHITE)
+                .build();
     }
 
 }

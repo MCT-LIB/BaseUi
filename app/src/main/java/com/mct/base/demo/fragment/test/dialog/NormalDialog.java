@@ -1,6 +1,7 @@
 package com.mct.base.demo.fragment.test.dialog;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -38,6 +39,8 @@ public class NormalDialog extends BaseOverlayDialog {
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        return new DialogOption.Builder().build();
+        return new DialogOption.Builder()
+                .setBackgroundColor(Color.WHITE)
+                .build();
     }
 }

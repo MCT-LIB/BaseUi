@@ -1,8 +1,8 @@
 package com.mct.base.demo.fragment.test.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.mct.base.demo.R;
 import com.mct.base.ui.BaseOverlayDialog;
-import com.mct.base.ui.utils.ScreenUtils;
 
 public class RoundedCornerBottomSheet extends BaseOverlayDialog {
 
@@ -21,6 +20,7 @@ public class RoundedCornerBottomSheet extends BaseOverlayDialog {
         super(context);
     }
 
+    @SuppressLint("InflateParams")
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater) {
         return inflater.inflate(R.layout.bts_test, null);
@@ -33,16 +33,15 @@ public class RoundedCornerBottomSheet extends BaseOverlayDialog {
 
     @Override
     protected void onDialogCreated(@NonNull AppCompatDialog dialog, View view) {
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(Color.WHITE);
-        drawable.setCornerRadius(ScreenUtils.dp2px(16f));
-        view.setBackground(drawable);
     }
 
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {
-        return null;
+        return new DialogOption.Builder()
+                .setBackgroundColor(Color.WHITE)
+                .setCornerRadius(16)
+                .build();
     }
 
 }
