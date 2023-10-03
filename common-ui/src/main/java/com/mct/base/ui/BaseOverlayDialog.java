@@ -3,8 +3,10 @@ package com.mct.base.ui;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,7 +28,6 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.shape.ShapeAppearanceModel;
-import com.mct.base.ui.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -353,7 +354,14 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
             window.getAttributes().windowAnimations = opt.windowAnimation;
         }
         // background
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Rect insets = opt.backgroundInsets;
+        if (insets != null) {
+            window.setBackgroundDrawable(new InsetDrawable(new ColorDrawable(Color.TRANSPARENT),
+                    insets.left, insets.top, insets.right, insets.bottom)
+            );
+        } else {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         // soft input
         window.setSoftInputMode(opt.softInputMode);
         // auto hide soft input
@@ -369,11 +377,10 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
 
     @NonNull
     private static Drawable createPopupDrawable(Context context, int color, int radius, boolean roundedBottomCorners) {
-        float cornerRadius = ScreenUtils.dp2px(radius);
-        float bottomCornerRadius = roundedBottomCorners ? cornerRadius : 0;
+        float bottomCornerRadius = roundedBottomCorners ? radius : 0;
         return createPopupDrawable(context, color, ShapeAppearanceModel.builder()
-                .setTopLeftCornerSize(cornerRadius)
-                .setTopRightCornerSize(cornerRadius)
+                .setTopLeftCornerSize(radius)
+                .setTopRightCornerSize(radius)
                 .setBottomLeftCornerSize(bottomCornerRadius)
                 .setBottomRightCornerSize(bottomCornerRadius)
                 .build());
@@ -396,6 +403,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         int windowAnimation;
         int cornerRadius;
         int backgroundColor;
+        Rect backgroundInsets;
         ShapeAppearanceModel shapeAppearanceModel;
 
         private DialogOption(@NonNull Builder builder) {
@@ -404,6 +412,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
             this.windowAnimation = builder.windowAnimation;
             this.cornerRadius = builder.cornerRadius;
             this.backgroundColor = builder.backgroundColor;
+            this.backgroundInsets = builder.backgroundInsets;
             this.shapeAppearanceModel = builder.shapeAppearanceModel;
         }
 
@@ -413,6 +422,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
             private int windowAnimation;
             private int cornerRadius;
             private int backgroundColor;
+            private Rect backgroundInsets;
             private ShapeAppearanceModel shapeAppearanceModel;
 
             public Builder() {
@@ -420,6 +430,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
                 windowAnimation = UNSET;
                 cornerRadius = UNSET;
                 backgroundColor = Color.TRANSPARENT;
+                backgroundInsets = null;
                 shapeAppearanceModel = null;
                 softInputMode = LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN;
             }
@@ -446,6 +457,21 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
 
             public Builder setBackgroundColor(int backgroundColor) {
                 this.backgroundColor = backgroundColor;
+                return this;
+            }
+
+            public Builder setBackgroundInsets(Rect backgroundInsets) {
+                this.backgroundInsets = backgroundInsets;
+                return this;
+            }
+
+            public Builder setBackgroundInsets(int insets) {
+                this.backgroundInsets = new Rect(insets, insets, insets, insets);
+                return this;
+            }
+
+            public Builder setBackgroundInsets(int left, int top, int right, int bottom) {
+                this.backgroundInsets = new Rect(left, top, right, bottom);
                 return this;
             }
 
