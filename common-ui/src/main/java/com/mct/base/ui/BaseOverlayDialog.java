@@ -1,5 +1,6 @@
 package com.mct.base.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -9,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -26,6 +26,7 @@ import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.InsetDialogOnTouchListener;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.shape.ShapeAppearanceModel;
 
@@ -344,6 +345,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void initWindow(@NonNull Window window, @NonNull DialogOption opt) {
         // overlay
         if (opt.type != DialogOption.UNSET) {
@@ -356,6 +358,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         // background
         Rect insets = opt.backgroundInsets;
         if (insets != null) {
+            window.getDecorView().setOnTouchListener(new InsetDialogOnTouchListener(getDialog(), insets));
             window.setBackgroundDrawable(new InsetDrawable(new ColorDrawable(Color.TRANSPARENT),
                     insets.left, insets.top, insets.right, insets.bottom)
             );
@@ -364,14 +367,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
         }
         // soft input
         window.setSoftInputMode(opt.softInputMode);
-        // auto hide soft input
-        window.getDecorView().setOnTouchListener((view, e) -> {
-            hideSoftInput();
-            if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                view.performClick();
-            }
-            return false;
-        });
+        // on init window
         onInitWindow(window);
     }
 
