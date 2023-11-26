@@ -23,7 +23,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleOwner;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.InsetDialogOnTouchListener;
@@ -34,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public abstract class BaseOverlayDialog implements LifecycleEventObserver {
+public abstract class BaseOverlayDialog {
 
     private final Context mContext;
     private final InputMethodManager mInputManager;
@@ -155,8 +154,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
     // Lifecycle
     ///////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+    private final LifecycleEventObserver mLifecycleEventObserver = (source, event) -> {
         // @formatter:off
         switch (event) {
             case ON_START:      onStart();  break;
@@ -166,7 +164,7 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
             case ON_DESTROY:    dismiss();  break;
         }
         // @formatter:on
-    }
+    };
 
     protected void onStart() {
     }
@@ -182,13 +180,13 @@ public abstract class BaseOverlayDialog implements LifecycleEventObserver {
 
     private void addObserverLifecycle() {
         if (mLifecycle != null) {
-            mLifecycle.addObserver(this);
+            mLifecycle.addObserver(mLifecycleEventObserver);
         }
     }
 
     private void removeObserveLifecycle() {
         if (mLifecycle != null) {
-            mLifecycle.removeObserver(this);
+            mLifecycle.removeObserver(mLifecycleEventObserver);
         }
     }
 
