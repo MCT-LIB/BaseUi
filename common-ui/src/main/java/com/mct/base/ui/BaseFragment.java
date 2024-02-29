@@ -154,31 +154,38 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
 
     @Override
     public IExtraTransaction parentExtraTransaction() {
-        if (getParentFragment() instanceof BaseFragment) {
-            return ((BaseFragment) getParentFragment()).childExtraTransaction();
+        if (getParentFragment() instanceof IBaseFragment) {
+            return ((IBaseFragment) getParentFragment()).childExtraTransaction();
         } else {
             return null;
         }
     }
 
     @Override
-    public IExtraTransaction parentExtraTransaction(Class<? extends BaseFragment> parent) {
-        if (getParentFragment() instanceof BaseFragment) {
-            if (getParentFragment().getClass() == parent) {
-                return ((BaseFragment) getParentFragment()).childExtraTransaction();
+    public IExtraTransaction parentExtraTransaction(Class<? extends IBaseFragment> parent) {
+        if (getParentFragment() instanceof IBaseFragment) {
+            if (getParentFragment().getClass().isInstance(parent)) {
+                return ((IBaseFragment) getParentFragment()).childExtraTransaction();
             }
-            return ((BaseFragment) getParentFragment()).parentExtraTransaction(parent);
+            return ((IBaseFragment) getParentFragment()).parentExtraTransaction(parent);
         }
         return null;
     }
 
     @Override
     public View getParentView() {
-        if (getView() != null && getView().getParent() instanceof ViewGroup) {
-            return (View) getView().getParent();
+        View view = getView();
+        if (view != null && view.getParent() != null) {
+            return (View) view.getParent();
         }
-        if (getParentFragment() != null) {
-            return getParentFragment().getView();
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment != null && parentFragment.getView() != null) {
+            View parentView = parentFragment.getView();
+            IExtraTransaction parentExtraTransaction = parentExtraTransaction();
+            if (parentExtraTransaction != null) {
+                return parentView.findViewById(parentExtraTransaction.getContainerId());
+            }
+            return parentView;
         }
         if (getActivity() != null) {
             return getActivity().findViewById(extraTransaction().getContainerId());
@@ -226,14 +233,11 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
             return true;
         }
-        if (onHandleBackPressed()) {
-            return true; // has handle back press.
-        }
         if (childExtraTransaction().getBackStackCount() != 0) {
             childExtraTransaction().popFragment();
             return true;
         }
-        return false;
+        return onHandleBackPressed(); // has handle back press.
     }
 
     /* ---------- IBaseView ---------- */
@@ -312,12 +316,7 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
         aod.setDuration(getAnimationDuration());
         aod.setEnter(enter);
         if (options.getAnimType() == AnimType.ANIMATOR) {
-            View view = getView();
-            assert view != null;
-            if (view.getParent() == null && view.getTag(R.id.tag_parent_view) == null) {
-                view.setTag(R.id.tag_parent_view, getParentView());
-            }
-            aod.setView(view);
+            aod.setView(getView());
             if (options.getAnimStyle() == AnimatorStyle.CIRCULAR_REVEAL) {
                 aod.setCircularPosition(getCircularPosition());
             }
@@ -341,83 +340,68 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     private View touchOverlay;
 
     private void setFragmentOverlay(boolean show) {
-        View overlay = getOverlay();
-        if (overlay != null) {
-            if (show) {
+        if (show) {
+            if (overlay == null) {
+                View parentView = getParentView();
+                if (!(parentView instanceof ViewGroup)) {
+                    return;
+                }
+                overlay = getOverlayByTag((ViewGroup) parentView, "Overlay", OVERLAY_VIEW_ELEVATION);
                 boolean isPop = getPopDirection();
                 overlay.setAlpha(isPop ? 1 : 0);
                 overlay.animate().alpha(isPop ? 0 : 1).start();
-                overlay.setVisibility(View.VISIBLE);
-            } else {
-                overlay.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void setDisableFragmentTouch(boolean disable) {
-        View touchOverlay = getTouchOverlay();
-        if (touchOverlay != null) {
-            touchOverlay.setVisibility(disable ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    private View getOverlay() {
-        if (overlay != null) {
-            return overlay;
-        }
-        View view = getParentView();
-        if (view.getTag(R.id.tag_overlay_view) != null) {
-            overlay = (View) view.getTag(R.id.tag_overlay_view);
-        } else {
-            overlay = getOverlayByTag("OverlayTag");
-            view.setTag(R.id.tag_overlay_view, overlay);
-            if (overlay != null) {
                 overlay.setBackgroundColor(getOverlayColor());
-                overlay.setElevation(OVERLAY_VIEW_ELEVATION);
+            }
+        } else {
+            if (overlay != null) {
+                removeInParent(overlay);
+                overlay = null;
             }
         }
-        return overlay;
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private View getTouchOverlay() {
-        if (touchOverlay != null) {
-            return touchOverlay;
-        }
-        View view = getParentView();
-        if (view.getTag(R.id.tag_touch_overlay_view) != null) {
-            touchOverlay = (View) view.getTag(R.id.tag_touch_overlay_view);
-        } else {
-            touchOverlay = getOverlayByTag("TouchOverlayTag");
-            view.setTag(R.id.tag_touch_overlay_view, touchOverlay);
-            if (touchOverlay != null) {
-                touchOverlay.setElevation(DISABLE_TOUCH_OVERLAY_VIEW_ELEVATION);
+    private void setDisableFragmentTouch(boolean disable) {
+        if (disable) {
+            if (touchOverlay == null) {
+                View parentView = getParentView();
+                if (!(parentView instanceof ViewGroup)) {
+                    return;
+                }
+                touchOverlay = getOverlayByTag((ViewGroup) parentView, "TouchOverlay", DISABLE_TOUCH_OVERLAY_VIEW_ELEVATION);
                 touchOverlay.setOnTouchListener((v, event) -> true);
             }
+        } else {
+            if (touchOverlay != null) {
+                removeInParent(touchOverlay);
+                touchOverlay = null;
+            }
         }
-        return touchOverlay;
     }
 
     private void clearOverlay() {
+        removeInParent(overlay);
+        removeInParent(touchOverlay);
         overlay = null;
         touchOverlay = null;
     }
 
     @Nullable
-    private View getOverlayByTag(String tag) {
-        View view = getParentView();
-        if (view instanceof ViewGroup) {
-            ViewGroup parent = (ViewGroup) view;
-            View overlay = parent.findViewWithTag(tag);
-            if (overlay == null) {
-                overlay = new View(getContext());
-                overlay.setTag(tag);
-                overlay.setVisibility(View.GONE);
-                parent.addView(overlay, new ViewGroup.LayoutParams(-1, -1));
-            }
-            return overlay;
+    private static View getOverlayByTag(@NonNull ViewGroup view, String tag, int elevation) {
+        View overlay = view.findViewWithTag(tag);
+        if (overlay == null) {
+            overlay = new View(view.getContext());
+            overlay.setTag(tag);
+            overlay.setElevation(elevation);
+            view.addView(overlay, new ViewGroup.LayoutParams(-1, -1));
         }
-        return null;
+        return overlay;
+    }
+
+    private static void removeInParent(View view) {
+        if (view != null && view.getParent() instanceof ViewGroup) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
     }
 
 }

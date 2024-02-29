@@ -12,8 +12,6 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.mct.base.ui.R;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -43,10 +41,6 @@ public class ViewPropertyAnimator extends Animator {
         if (parent != null) {
             return parent;
         }
-        parent = (View) view.getTag(R.id.tag_parent_view);
-        if (parent != null) {
-            return parent;
-        }
         // try all way to get parent
         return view;
     }
@@ -61,6 +55,14 @@ public class ViewPropertyAnimator extends Animator {
 
     @Override
     public void start() {
+        View target = mTarget.get();
+        if (target == null) {
+            return;
+        }
+        if (target.getHandler() == null) {
+            target.post(this::start);
+            return;
+        }
         if (!mIsInit) {
             initialAnimator(mTarget.get(), mAnimatorSet);
         }

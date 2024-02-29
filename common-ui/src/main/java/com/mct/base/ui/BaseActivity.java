@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.IdRes;
@@ -28,15 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private IExtraTransaction mIExtraTransaction;
 
     ///////////////////////////////////////////////////////////////////////////
-    // Abstract
-    ///////////////////////////////////////////////////////////////////////////
-
-    @IdRes
-    protected abstract int getContainerId();
-
-    protected abstract boolean showToastOnBackPressed();
-
-    ///////////////////////////////////////////////////////////////////////////
     // LifeCircle
     ///////////////////////////////////////////////////////////////////////////
 
@@ -46,27 +38,34 @@ public abstract class BaseActivity extends AppCompatActivity {
         mHandler = new Handler(getMainLooper());
     }
 
-    private boolean mIsBackPressed;
-
+    @SuppressWarnings("deprecation")
     @Override
-    public void onBackPressed() {
+    public final void onBackPressed() {
         Fragment fragment = extraTransaction().getCurrentFragment();
         if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
             return;
         }
-        if (extraTransaction().getBackStackCount() == 0) {
-            if (!mIsBackPressed && showToastOnBackPressed()) {
-                mIsBackPressed = true;
-                postDelayed(() -> mIsBackPressed = false, 3000);
-                return;
-            }
-        } else {
-            mIsBackPressed = false;
+        if (extraTransaction().getBackStackCount() != 0) {
             extraTransaction().popFragment();
             return;
         }
-        mIsBackPressed = false;
+        if (onHandleBackPressed()) {
+            return;
+        }
         super.onBackPressed();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Can be override
+    ///////////////////////////////////////////////////////////////////////////
+
+    @IdRes
+    protected int getContainerId() {
+        return Window.ID_ANDROID_CONTENT;
+    }
+
+    protected boolean onHandleBackPressed() {
+        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 
 import com.mct.base.ui.BaseFragment;
 import com.mct.base.ui.R;
-import com.mct.base.ui.core.IBaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
 
 import java.lang.annotation.Retention;
@@ -175,9 +174,9 @@ public class SwipeBackLayout extends FrameLayout {
         mEdgeFlag = orientation;
         mHelper.setEdgeTrackingEnabled(orientation);
         if (orientation == EDGE_LEFT) {
-            setShadow(R.drawable.shadow_left, EDGE_LEFT);
+            setShadow(R.drawable.base_ui_swipe_back_shadow_left, EDGE_LEFT);
         } else {
-            setShadow(R.drawable.shadow_right, EDGE_RIGHT);
+            setShadow(R.drawable.base_ui_swipe_back_shadow_right, EDGE_RIGHT);
         }
     }
 
@@ -479,15 +478,10 @@ public class SwipeBackLayout extends FrameLayout {
                     if (mCallOnDestroyView) {
                         return;
                     }
-
-                    if (mPreFragment instanceof IBaseFragment) {
-                        ((IBaseFragment) mPreFragment).pendingPreventAnimation();
-                    }
-
                     if (!mFragment.isDetached()) {
                         onDragFinished();
                         mFragment.pendingPreventAnimation();
-                        IExtraTransaction transaction = mFragment.getParentFragment() != null
+                        IExtraTransaction transaction = mFragment.parentExtraTransaction() != null
                                 ? mFragment.parentExtraTransaction()
                                 : mFragment.extraTransaction();
                         transaction.popFragment();

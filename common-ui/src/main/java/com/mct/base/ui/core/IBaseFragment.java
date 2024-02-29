@@ -2,8 +2,6 @@ package com.mct.base.ui.core;
 
 import android.view.View;
 
-import com.mct.base.ui.BaseFragment;
-
 public interface IBaseFragment {
 
     IKeyboardManager keyboardManager();
@@ -26,7 +24,7 @@ public interface IBaseFragment {
     /**
      * @return transaction of parent fragment if have (recursive)
      */
-    IExtraTransaction parentExtraTransaction(Class<? extends BaseFragment> parent);
+    IExtraTransaction parentExtraTransaction(Class<? extends IBaseFragment> parent);
 
     View getParentView();
 
