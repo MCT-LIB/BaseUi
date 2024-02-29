@@ -32,10 +32,6 @@ public class NormalDialog extends BaseOverlayDialog {
                 .create();
     }
 
-    @Override
-    protected void onDialogCreated(@NonNull AppCompatDialog dialog, View view) {
-    }
-
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {

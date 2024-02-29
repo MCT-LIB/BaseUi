@@ -31,10 +31,6 @@ public class NormalBottomSheet extends BaseOverlayDialog {
         return new BottomSheetDialog(context);
     }
 
-    @Override
-    protected void onDialogCreated(@NonNull AppCompatDialog dialog, View view) {
-    }
-
     @Nullable
     @Override
     protected DialogOption onCreateDialogOption() {

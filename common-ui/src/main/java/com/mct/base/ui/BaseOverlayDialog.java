@@ -15,13 +15,11 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialog;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -40,20 +38,16 @@ public abstract class BaseOverlayDialog {
 
     private View mView;
     private AppCompatDialog mDialog;
+    private DialogOption mDialogOption;
 
-    private boolean mIsShowing;
+    private boolean mIsHiding;
+    private boolean mIsDismissed;
 
-    private Lifecycle mLifecycle;
     private List<OnShowListener> mOnShowListeners;
     private List<OnDismissListener> mOnDismissListeners;
 
     public BaseOverlayDialog(@NonNull Context context) {
-        this(context, null);
-    }
-
-    public BaseOverlayDialog(@NonNull Context context, Lifecycle lifecycle) {
         this.mContext = context;
-        this.mLifecycle = lifecycle;
         this.mInputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
@@ -61,34 +55,21 @@ public abstract class BaseOverlayDialog {
     // Public
     ///////////////////////////////////////////////////////////////////////////
 
-    public void show() {
+    public final void show() {
         createDialogIfNecessary();
-        if (!mIsShowing) {
-            mIsShowing = true;
-            mDialog.show();
-            onShowed();
-            addObserverLifecycle();
+        mDialog.show();
+    }
+
+    public final void hide() {
+        if (mDialog != null) {
+            mDialog.hide();
         }
     }
 
-    public void dismiss() {
-        if (mIsShowing) {
-            mIsShowing = false;
+    public final void dismiss() {
+        if (mDialog != null) {
             mDialog.dismiss();
-            onDismissed();
-            removeObserveLifecycle();
         }
-    }
-
-    public BaseOverlayDialog setLifecycle(Lifecycle lifecycle) {
-        if (mIsShowing) {
-            removeObserveLifecycle();
-            mLifecycle = lifecycle;
-            addObserverLifecycle();
-        } else {
-            mLifecycle = lifecycle;
-        }
-        return this;
     }
 
     public BaseOverlayDialog addOnShowListener(OnShowListener listener) {
@@ -147,47 +128,10 @@ public abstract class BaseOverlayDialog {
      * Hide the soft keyboard.
      */
     public void hideSoftInput() {
+        if (mDialog == null) {
+            return;
+        }
         mInputManager.hideSoftInputFromWindow(mDialog.getWindow().getDecorView().getWindowToken(), 0);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Lifecycle
-    ///////////////////////////////////////////////////////////////////////////
-
-    private final LifecycleEventObserver mLifecycleEventObserver = (source, event) -> {
-        // @formatter:off
-        switch (event) {
-            case ON_START:      onStart();  break;
-            case ON_RESUME:     onResume(); break;
-            case ON_PAUSE:      onPause();  break;
-            case ON_STOP:       onStop();   break;
-            case ON_DESTROY:    dismiss();  break;
-        }
-        // @formatter:on
-    };
-
-    protected void onStart() {
-    }
-
-    protected void onResume() {
-    }
-
-    protected void onPause() {
-    }
-
-    protected void onStop() {
-    }
-
-    private void addObserverLifecycle() {
-        if (mLifecycle != null) {
-            mLifecycle.addObserver(mLifecycleEventObserver);
-        }
-    }
-
-    private void removeObserveLifecycle() {
-        if (mLifecycle != null) {
-            mLifecycle.removeObserver(mLifecycleEventObserver);
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -208,16 +152,6 @@ public abstract class BaseOverlayDialog {
      * @return an AppCompatDialog
      */
     protected abstract AppCompatDialog onCreateDialog(Context context);
-
-    /**
-     * An abstract method called after the dialog is created.
-     * This method provides the subclass with an opportunity to perform any
-     * necessary operations on the dialog and View that was created.
-     *
-     * @param dialog the dialog was created
-     * @param view   the view was created
-     */
-    protected abstract void onDialogCreated(@NonNull AppCompatDialog dialog, View view);
 
     /**
      * Creates the dialog option
@@ -247,36 +181,34 @@ public abstract class BaseOverlayDialog {
         return mView.findViewById(id);
     }
 
-    @CallSuper
-    protected void onShowed() {
-        if (mOnShowListeners == null) {
-            return;
-        }
-        for (OnShowListener listener : mOnShowListeners) {
-            listener.onShow(this);
-        }
-    }
-
-    @CallSuper
-    protected void onDismissed() {
-        if (mOnDismissListeners == null) {
-            return;
-        }
-        for (OnDismissListener listener : mOnDismissListeners) {
-            listener.onDismiss(this);
-        }
-    }
-
-    protected void onInitWindow(Window window) {
-    }
-
     /**
      * Handle backPress if need
      *
      * @return true if have handle backPress.
      */
-    protected boolean onBackPressed() {
+    protected boolean onHandleBackPressed() {
         return false;
+    }
+
+    /* --- Lifecycle --- */
+
+    protected void onDialogCreated(@NonNull AppCompatDialog dialog, DialogOption dialogOption, View view) {
+    }
+
+    protected void onStart() {
+        if (mOnShowListeners != null) {
+            for (OnShowListener listener : mOnShowListeners) {
+                listener.onShow(this);
+            }
+        }
+    }
+
+    protected void onStop() {
+        if (mOnDismissListeners != null) {
+            for (OnDismissListener listener : mOnDismissListeners) {
+                listener.onDismiss(this);
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -287,28 +219,34 @@ public abstract class BaseOverlayDialog {
         if (mDialog == null) {
             mView = onCreateView(LayoutInflater.from(mContext));
             mDialog = onCreateDialog(mContext);
-            DialogOption option = onCreateDialogOption();
-            if (option == null) {
-                option = new DialogOption.Builder().build();
+            mDialog.getLifecycle().addObserver((LifecycleEventObserver) (lifecycleOwner, event) -> {
+                switch (event) {
+                    // @formatter:off
+                    case ON_CREATE: onDialogCreated(mDialog, mDialogOption, mView); break;
+                    case ON_START:  onStart();                                      break;
+                    case ON_STOP:   onStop();                                       break;
+                    // @formatter:on
+                }
+            });
+            mDialogOption = onCreateDialogOption();
+            if (mDialogOption == null) {
+                mDialogOption = new DialogOption.Builder().build();
             }
-            initDialog(mDialog, mView, option);
-            initWindow(mDialog.getWindow(), option);
-            onDialogCreated(mDialog, mView);
+            initWindow(mDialog.getWindow(), mDialogOption);
+            initDialog(mDialog, mView, mDialogOption);
         }
     }
 
     private void initDialog(@NonNull AppCompatDialog dialog, @Nullable View view, @NonNull DialogOption opt) {
         // dismiss listener
-        dialog.setOnDismissListener(d -> {
-            dismiss();
-            hideSoftInput();
-        });
+        dialog.setOnDismissListener(d -> hideSoftInput());
         // back pressed
         dialog.setOnKeyListener((d, i, e) -> {
             if (i == KeyEvent.KEYCODE_BACK || i == KeyEvent.KEYCODE_ESCAPE) {
-                if (!onBackPressed()) {
-                    dismiss();
+                if (onHandleBackPressed()) {
+                    return true;
                 }
+                dismiss();
                 return true;
             }
             return false;
@@ -365,8 +303,6 @@ public abstract class BaseOverlayDialog {
         }
         // soft input
         window.setSoftInputMode(opt.softInputMode);
-        // on init window
-        onInitWindow(window);
     }
 
     @NonNull
@@ -387,6 +323,10 @@ public abstract class BaseOverlayDialog {
         popupDrawable.setFillColor(ColorStateList.valueOf(color));
         return popupDrawable;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // DialogOption
+    ///////////////////////////////////////////////////////////////////////////
 
     public static class DialogOption {
 

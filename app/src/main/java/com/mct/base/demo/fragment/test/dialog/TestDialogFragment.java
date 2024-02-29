@@ -43,7 +43,14 @@ public class TestDialogFragment extends BaseFragment implements View.OnClickList
     public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.btn_dialog_Normal:
-                new NormalDialog(requireContext()).setLifecycle(getLifecycle()).show();
+                new NormalDialog(requireContext())
+                        .addOnShowListener(d -> postDelayed(() -> {
+                            new RoundedCornerDialog(requireContext())
+                                    .addOnShowListener(d1 -> d.hide())
+                                    .addOnDismissListener(d1 -> d.show())
+                                    .show();
+                        }, 1000))
+                        .show();
                 break;
             case R.id.btn_dialog_Rounded:
                 new RoundedCornerDialog(requireContext()).show();
