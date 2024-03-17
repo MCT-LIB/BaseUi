@@ -222,6 +222,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             BaseActivity.this.removeCallbacks(runnable);
         }
 
+        @Override
+        public void requestBackPress() {
+            BaseActivity.this.onBackPressed();
+        }
+
     }
 
     class KeyboardManagerWrapper implements IKeyboardManager {

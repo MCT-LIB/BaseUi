@@ -12,4 +12,6 @@ public interface IBaseActivity {
 
     void removeCallbacks(Runnable runnable);
 
+    void requestBackPress();
+
 }

@@ -38,6 +38,8 @@ public interface IBaseFragment {
 
     void removeCallbacks(Runnable runnable);
 
+    void requestBackPress();
+
     boolean onBackPressed();
 
 }

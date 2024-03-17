@@ -225,6 +225,13 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     @Override
+    public void requestBackPress() {
+        if (mIBaseActivity != null) {
+            mIBaseActivity.requestBackPress();
+        }
+    }
+
+    @Override
     public final boolean onBackPressed() {
         if (mAnimExtras != null) {
             return true; // block when animation is running.
