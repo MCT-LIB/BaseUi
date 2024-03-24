@@ -15,6 +15,7 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,7 +58,9 @@ public abstract class BaseOverlayDialog {
 
     public final void show() {
         createDialogIfNecessary();
-        mDialog.show();
+        if (mDialog != null) {
+            mDialog.show();
+        }
     }
 
     public final void hide() {
@@ -70,6 +73,13 @@ public abstract class BaseOverlayDialog {
         if (mDialog != null) {
             mDialog.dismiss();
         }
+    }
+
+    public final boolean isShowing() {
+        if (mDialog != null) {
+            return mDialog.isShowing();
+        }
+        return false;
     }
 
     public BaseOverlayDialog addOnShowListener(OnShowListener listener) {
@@ -178,7 +188,13 @@ public abstract class BaseOverlayDialog {
     }
 
     protected final <T extends View> T findViewById(@IdRes int id) {
-        return mView.findViewById(id);
+        if (null != mDialog) {
+            return mDialog.findViewById(id);
+        }
+        if (null != mView) {
+            return mView.findViewById(id);
+        }
+        throw new IllegalStateException("Dialog was not created yet.");
     }
 
     /**
@@ -192,9 +208,11 @@ public abstract class BaseOverlayDialog {
 
     /* --- Lifecycle --- */
 
+    @CallSuper
     protected void onDialogCreated(@NonNull AppCompatDialog dialog, DialogOption dialogOption, View view) {
     }
 
+    @CallSuper
     protected void onStart() {
         if (mOnShowListeners != null) {
             for (OnShowListener listener : mOnShowListeners) {
@@ -203,6 +221,7 @@ public abstract class BaseOverlayDialog {
         }
     }
 
+    @CallSuper
     protected void onStop() {
         if (mOnDismissListeners != null) {
             for (OnDismissListener listener : mOnDismissListeners) {
