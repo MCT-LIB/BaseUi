@@ -11,6 +11,7 @@ import android.graphics.drawable.InsetDrawable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
@@ -24,12 +25,13 @@ import androidx.appcompat.app.AppCompatDialog;
 import androidx.lifecycle.LifecycleEventObserver;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.dialog.InsetDialogOnTouchListener;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.shape.ShapeAppearanceModel;
+import com.mct.base.ui.utils.InsetDialogOnTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public abstract class BaseOverlayDialog {
@@ -247,10 +249,7 @@ public abstract class BaseOverlayDialog {
                     // @formatter:on
                 }
             });
-            mDialogOption = onCreateDialogOption();
-            if (mDialogOption == null) {
-                mDialogOption = new DialogOption.Builder().build();
-            }
+            mDialogOption = Optional.ofNullable(onCreateDialogOption()).orElse(new DialogOption.Builder().build());
             initWindow(mDialog.getWindow(), mDialogOption);
             initDialog(mDialog, mView, mDialogOption);
         }
@@ -272,24 +271,14 @@ public abstract class BaseOverlayDialog {
         });
         // background
         Window window = dialog.getWindow();
-        window.getDecorView().post(() -> {
-            int contentViewIdRes;
-            boolean roundedBottomCorners;
-            if (dialog instanceof BottomSheetDialog) {
-                contentViewIdRes = com.google.android.material.R.id.design_bottom_sheet;
-                roundedBottomCorners = false;
-            } else {
-                contentViewIdRes = Window.ID_ANDROID_CONTENT;
-                roundedBottomCorners = true;
-            }
-            View contentView = window.findViewById(contentViewIdRes);
-            if (contentView != null) {
-                contentView.setClipToOutline(true);
-                contentView.setBackground(opt.shapeAppearanceModel != null
-                        ? createPopupDrawable(mContext, opt.backgroundColor, opt.shapeAppearanceModel)
-                        : createPopupDrawable(mContext, opt.backgroundColor, opt.cornerRadius, roundedBottomCorners));
-            }
-        });
+        if (dialog instanceof BottomSheetDialog) {
+            window.getDecorView().post(() -> {
+                ViewParent parent = view.getParent();
+                setBackground(parent instanceof View ? (View) parent : view, opt, false);
+            });
+        } else {
+            setBackground(window.findViewById(Window.ID_ANDROID_CONTENT), opt, true);
+        }
         // content
         if (view != null) {
             if (dialog instanceof AlertDialog) {
@@ -322,6 +311,16 @@ public abstract class BaseOverlayDialog {
         }
         // soft input
         window.setSoftInputMode(opt.softInputMode);
+    }
+
+    private static void setBackground(View view, DialogOption option, boolean roundedBottomCorners) {
+        Optional.ofNullable(view).ifPresent(v -> {
+            Context context = v.getContext();
+            v.setClipToOutline(true);
+            v.setBackground(option.shapeAppearanceModel != null
+                    ? createPopupDrawable(context, option.backgroundColor, option.shapeAppearanceModel)
+                    : createPopupDrawable(context, option.backgroundColor, option.cornerRadius, roundedBottomCorners));
+        });
     }
 
     @NonNull
