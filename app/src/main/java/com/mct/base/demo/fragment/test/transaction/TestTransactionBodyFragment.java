@@ -51,47 +51,40 @@ public class TestTransactionBodyFragment extends BaseFragment implements View.On
     @Override
     public void onClick(@NonNull View v) {
         IExtraTransaction extraTransaction = parentExtraTransaction();
-        switch (v.getId()) {
-            case R.id.btn_replaceFragment:
-                extraTransaction.replaceFragment(
-                        new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createCircularRevealTransition()
-                );
-                break;
-            case R.id.btn_replaceFragmentToStack:
-                extraTransaction.replaceFragmentToStack(
-                        new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createTransition(
-                                AnimOptions.animation(AnimationStyle.CUBE).left().build(),
-                                AnimOptions.animation(AnimationStyle.CUBE).left().build(),
-                                AnimOptions.animation(AnimationStyle.CUBE).right().build(),
-                                AnimOptions.animation(AnimationStyle.CUBE).right().build()
-                        )
-                );
-                break;
-            case R.id.btn_replaceAndClearBackStack:
-                extraTransaction.replaceAndClearBackStack(
-                        new TestTransactionBodyFragment(),
-                        FragmentTransitionFactory.createTransition(
-                                AnimOptions.animation(AnimationStyle.CUBE).up().build(),
-                                AnimOptions.animation(AnimationStyle.CUBE).up().build(),
-                                AnimOptions.animation(AnimationStyle.CUBE).right().build(),
-                                AnimOptions.animation(AnimationStyle.CUBE).right().build()
-                        )
-                );
-                break;
-            case R.id.btn_clearBackStack:
-                extraTransaction.clearBackStack();
-                break;
-            case R.id.btn_popFragment:
-                extraTransaction.popFragment();
-                break;
-            case R.id.btn_popFragmentToPosition:
-                extraTransaction.popFragmentToPosition(getNumberFromEditText());
-                break;
-            case R.id.btn_popFragmentByAmount:
-                extraTransaction.popFragmentByAmount(getNumberFromEditText());
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_replaceFragment) {
+            extraTransaction.replaceFragment(
+                    new TestTransactionBodyFragment(),
+                    FragmentTransitionFactory.createCircularRevealTransition()
+            );
+        } else if (id == R.id.btn_replaceFragmentToStack) {
+            extraTransaction.replaceFragmentToStack(
+                    new TestTransactionBodyFragment(),
+                    FragmentTransitionFactory.createTransition(
+                            AnimOptions.animation(AnimationStyle.CUBE).left().build(),
+                            AnimOptions.animation(AnimationStyle.CUBE).left().build(),
+                            AnimOptions.animation(AnimationStyle.CUBE).right().build(),
+                            AnimOptions.animation(AnimationStyle.CUBE).right().build()
+                    )
+            );
+        } else if (id == R.id.btn_replaceAndClearBackStack) {
+            extraTransaction.replaceAndClearBackStack(
+                    new TestTransactionBodyFragment(),
+                    FragmentTransitionFactory.createTransition(
+                            AnimOptions.animation(AnimationStyle.CUBE).up().build(),
+                            AnimOptions.animation(AnimationStyle.CUBE).up().build(),
+                            AnimOptions.animation(AnimationStyle.CUBE).right().build(),
+                            AnimOptions.animation(AnimationStyle.CUBE).right().build()
+                    )
+            );
+        } else if (id == R.id.btn_clearBackStack) {
+            extraTransaction.clearBackStack();
+        } else if (id == R.id.btn_popFragment) {
+            extraTransaction.popFragment();
+        } else if (id == R.id.btn_popFragmentToPosition) {
+            extraTransaction.popFragmentToPosition(getNumberFromEditText());
+        } else if (id == R.id.btn_popFragmentByAmount) {
+            extraTransaction.popFragmentByAmount(getNumberFromEditText());
         }
     }
 

@@ -41,26 +41,22 @@ public class TestDialogFragment extends BaseFragment implements View.OnClickList
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(@NonNull View v) {
-        switch (v.getId()) {
-            case R.id.btn_dialog_Normal:
-                new NormalDialog(requireContext())
-                        .addOnShowListener(d -> postDelayed(() -> {
-                            new RoundedCornerDialog(requireContext())
-                                    .addOnShowListener(d1 -> d.hide())
-                                    .addOnDismissListener(d1 -> d.show())
-                                    .show();
-                        }, 1000))
-                        .show();
-                break;
-            case R.id.btn_dialog_Rounded:
-                new RoundedCornerDialog(requireContext()).show();
-                break;
-            case R.id.btn_bts_dialog_Normal:
-                new NormalBottomSheet(requireContext()).show();
-                break;
-            case R.id.btn_bts_dialog_Rounded:
-                new RoundedCornerBottomSheet(requireContext()).show();
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_dialog_Normal) {
+            new NormalDialog(requireContext())
+                    .addOnShowListener(d -> postDelayed(() -> {
+                        new RoundedCornerDialog(requireContext())
+                                .addOnShowListener(d1 -> d.hide())
+                                .addOnDismissListener(d1 -> d.show())
+                                .show();
+                    }, 1000))
+                    .show();
+        } else if (id == R.id.btn_dialog_Rounded) {
+            new RoundedCornerDialog(requireContext()).show();
+        } else if (id == R.id.btn_bts_dialog_Normal) {
+            new NormalBottomSheet(requireContext()).show();
+        } else if (id == R.id.btn_bts_dialog_Rounded) {
+            new RoundedCornerBottomSheet(requireContext()).show();
         }
     }
 }

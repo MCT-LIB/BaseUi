@@ -48,22 +48,17 @@ public class Test3DAnimationBodyFragment extends BaseFragment implements View.On
     public void onClick(@NonNull View v) {
         IExtraTransaction extraTransaction = parentExtraTransaction();
         int direction;
-        switch (v.getId()) {
-            case R.id.btn_Left:
-                direction = AnimDirection.LEFT;
-                break;
-            case R.id.btn_Right:
-                direction = AnimDirection.RIGHT;
-                break;
-            case R.id.btn_Up:
-                direction = AnimDirection.UP;
-                break;
-            case R.id.btn_Down:
-                direction = AnimDirection.DOWN;
-                break;
-            default:
-                direction = AnimDirection.NONE;
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_Left) {
+            direction = AnimDirection.LEFT;
+        } else if (id == R.id.btn_Right) {
+            direction = AnimDirection.RIGHT;
+        } else if (id == R.id.btn_Up) {
+            direction = AnimDirection.UP;
+        } else if (id == R.id.btn_Down) {
+            direction = AnimDirection.DOWN;
+        } else {
+            direction = AnimDirection.NONE;
         }
         AnimOptions anim = AnimOptions.animation(Test3DAnimationFragment.sAnimationStyle).direction(direction).build();
         extraTransaction.replaceFragment(

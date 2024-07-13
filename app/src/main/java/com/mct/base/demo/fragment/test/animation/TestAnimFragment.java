@@ -42,25 +42,22 @@ public class TestAnimFragment extends BaseFragment implements View.OnClickListen
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(@NonNull View v) {
-        switch (v.getId()) {
-            case R.id.btn_transit:
-                extraTransaction().replaceFragmentToStack(
-                        new TestTransitFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                );
-                break;
-            case R.id.btn_3d_anim:
-                extraTransaction().replaceFragmentToStack(
-                        new Test3DAnimationFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                );
-                break;
-            case R.id.btn_circular:
-                extraTransaction().replaceFragmentToStack(
-                        new TestCircularRevealFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                );
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_transit) {
+            extraTransaction().replaceFragmentToStack(
+                    new TestTransitFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            );
+        } else if (id == R.id.btn_3d_anim) {
+            extraTransaction().replaceFragmentToStack(
+                    new Test3DAnimationFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            );
+        } else if (id == R.id.btn_circular) {
+            extraTransaction().replaceFragmentToStack(
+                    new TestCircularRevealFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            );
         }
     }
 }

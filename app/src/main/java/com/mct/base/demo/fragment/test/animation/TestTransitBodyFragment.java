@@ -43,25 +43,22 @@ public class TestTransitBodyFragment extends BaseFragment implements View.OnClic
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(@NonNull View v) {
-        switch (v.getId()) {
-            case R.id.btn_transitOpen:
-                parentExtraTransaction().replaceFragment(
-                        new TestTransitBodyFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                );
-                break;
-            case R.id.btn_transitClose:
-                parentExtraTransaction().replaceFragment(
-                        new TestTransitBodyFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                );
-                break;
-            case R.id.btn_transitFade:
-                parentExtraTransaction().replaceFragment(
-                        new TestTransitBodyFragment(),
-                        FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                );
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_transitOpen) {
+            parentExtraTransaction().replaceFragment(
+                    new TestTransitBodyFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            );
+        } else if (id == R.id.btn_transitClose) {
+            parentExtraTransaction().replaceFragment(
+                    new TestTransitBodyFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+            );
+        } else if (id == R.id.btn_transitFade) {
+            parentExtraTransaction().replaceFragment(
+                    new TestTransitBodyFragment(),
+                    FragmentTransitionFactory.createTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            );
         }
     }
 }
