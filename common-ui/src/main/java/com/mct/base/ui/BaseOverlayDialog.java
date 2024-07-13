@@ -260,12 +260,14 @@ public abstract class BaseOverlayDialog {
         dialog.setOnDismissListener(d -> hideSoftInput());
         // back pressed
         dialog.setOnKeyListener((d, i, e) -> {
-            if (i == KeyEvent.KEYCODE_BACK || i == KeyEvent.KEYCODE_ESCAPE) {
-                if (onHandleBackPressed()) {
+            if (e.getAction() == KeyEvent.ACTION_UP) {
+                if (i == KeyEvent.KEYCODE_BACK || i == KeyEvent.KEYCODE_ESCAPE) {
+                    if (onHandleBackPressed()) {
+                        return true;
+                    }
+                    dismiss();
                     return true;
                 }
-                dismiss();
-                return true;
             }
             return false;
         });
@@ -350,13 +352,13 @@ public abstract class BaseOverlayDialog {
 
         public static final int UNSET = 0;
 
-        int type;
-        int softInputMode;
-        int windowAnimation;
-        int cornerRadius;
-        int backgroundColor;
-        Rect backgroundInsets;
-        ShapeAppearanceModel shapeAppearanceModel;
+        public int type;
+        public int softInputMode;
+        public int windowAnimation;
+        public int cornerRadius;
+        public int backgroundColor;
+        public Rect backgroundInsets;
+        public ShapeAppearanceModel shapeAppearanceModel;
 
         private DialogOption(@NonNull Builder builder) {
             this.type = builder.type;
