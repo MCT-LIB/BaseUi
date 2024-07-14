@@ -1,10 +1,12 @@
 # note:
 # check path of '.aar.' file
 # check artifactId 'module name'
-jdk:
-  - openjdk17
+
+# open this below comment if jitpack not work
+#jdk:
+#  - openjdk17
 before_install:
   - ./scripts/prepareJitpackEnvironment.sh
 install:
   - FILE="-Dfile=./common-ui/release/common-ui-release.aar"
-  - mvn install:install-file $FILE -DgroupId=com.mct -DartifactId=common-ui -Dversion=1.0 -Dpackaging=aar -DgeneratePom=true
+  - mvn install:install-file $FILE -DgroupId=com.mct -DartifactId=common-ui -Dversion=1.2.4 -Dpackaging=aar -DgeneratePom=true
