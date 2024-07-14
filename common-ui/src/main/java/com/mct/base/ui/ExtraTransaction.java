@@ -226,6 +226,6 @@ class ExtraTransaction implements IExtraTransaction {
     }
 
     private void performHideSoftInput() {
-        mKeyboardManager.hideSoftInput();
+        mKeyboardManager.hideSoftInput(200);
     }
 }

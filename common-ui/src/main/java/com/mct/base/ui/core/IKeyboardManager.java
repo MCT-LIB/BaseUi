@@ -10,9 +10,11 @@ public interface IKeyboardManager {
 
     void showSoftInput(@NonNull View view);
 
-    void hideSoftInput(@NonNull View view);
-
     void hideSoftInput();
+
+    void hideSoftInput(long delay);
+
+    void hideSoftInput(@NonNull View view);
 
     boolean isSoftInputVisible();
 

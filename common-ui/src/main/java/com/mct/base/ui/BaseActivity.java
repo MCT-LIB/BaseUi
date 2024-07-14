@@ -132,15 +132,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void hideSoftInput(@NonNull View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) {
-            return;
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    protected void hideSoftInput() {
+        hideSoftInput(0);
     }
 
-    protected void hideSoftInput() {
+    protected void hideSoftInput(long delay) {
         if (hideSoftInputRunnable == null) {
             hideSoftInputRunnable = () -> {
                 if (isSoftInputVisible()) {
@@ -153,7 +149,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             };
         }
         removeCallbacks(hideSoftInputRunnable);
-        postDelayed(hideSoftInputRunnable, 200);
+        postDelayed(hideSoftInputRunnable, delay);
+    }
+
+    protected void hideSoftInput(@NonNull View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return;
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     protected boolean isSoftInputVisible() {
@@ -241,13 +245,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         @Override
-        public void hideSoftInput(@NonNull View view) {
-            BaseActivity.this.hideSoftInput(view);
+        public void hideSoftInput() {
+            BaseActivity.this.hideSoftInput();
         }
 
         @Override
-        public void hideSoftInput() {
-            BaseActivity.this.hideSoftInput();
+        public void hideSoftInput(long delay) {
+            BaseActivity.this.hideSoftInput(delay);
+        }
+
+        @Override
+        public void hideSoftInput(@NonNull View view) {
+            BaseActivity.this.hideSoftInput(view);
         }
 
         @Override
