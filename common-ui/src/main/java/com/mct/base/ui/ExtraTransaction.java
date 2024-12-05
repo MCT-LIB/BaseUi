@@ -10,15 +10,15 @@ import com.mct.base.ui.core.IKeyboardManager;
 import com.mct.base.ui.transition.FragmentTransition;
 import com.mct.base.ui.transition.FragmentTransitionFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
 
 class ExtraTransaction implements IExtraTransaction {
+
+    private static final int FLAG_INCLUSIVE = FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
     private final int mContainerId;
     private final FragmentManager mFragmentManager;
     private final IKeyboardManager mKeyboardManager;
-    private final List<Integer> mFragmentIds = new ArrayList<>();
 
     public ExtraTransaction(int mContainerId, FragmentManager mFragmentManager, IKeyboardManager mKeyboardManager) {
         this.mContainerId = mContainerId;
@@ -67,7 +67,7 @@ class ExtraTransaction implements IExtraTransaction {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transition.applyTransition(transaction);
         transaction.add(mContainerId, fragment, fragment.getClass().getName());
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     @Override
@@ -85,7 +85,7 @@ class ExtraTransaction implements IExtraTransaction {
         }
         transaction.add(mContainerId, fragment, fragment.getClass().getName());
         transaction.addToBackStack(fragment.getClass().getName());
-        mFragmentIds.add(transaction.commit());
+        transaction.commitAllowingStateLoss();
     }
 
     @Override
@@ -108,7 +108,7 @@ class ExtraTransaction implements IExtraTransaction {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transition.applyTransition(transaction);
         transaction.replace(mContainerId, fragment, fragment.getClass().getName());
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     @Override
@@ -123,7 +123,7 @@ class ExtraTransaction implements IExtraTransaction {
         transition.applyTransition(transaction);
         transaction.replace(mContainerId, fragment, fragment.getClass().getName());
         transaction.addToBackStack(fragment.getClass().getName());
-        mFragmentIds.add(transaction.commit());
+        transaction.commitAllowingStateLoss();
     }
 
     @Override
@@ -145,14 +145,15 @@ class ExtraTransaction implements IExtraTransaction {
     @Override
     public void clearBackStack(boolean immediate) {
         performHideSoftInput();
-        if (getBackStackCount() > 0) {
-            mFragmentIds.clear();
-            if (immediate) {
-                mFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            } else {
-                mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        allowStateLoss(() -> {
+            if (getBackStackCount() > 0) {
+                if (immediate) {
+                    mFragmentManager.popBackStackImmediate(null, FLAG_INCLUSIVE);
+                } else {
+                    mFragmentManager.popBackStack(null, FLAG_INCLUSIVE);
+                }
             }
-        }
+        });
     }
 
     @Override
@@ -163,36 +164,41 @@ class ExtraTransaction implements IExtraTransaction {
     @Override
     public void popFragment(boolean immediate) {
         performHideSoftInput();
-        if (!mFragmentIds.isEmpty()) {
-            mFragmentIds.remove(mFragmentIds.size() - 1);
-        }
-        if (immediate) {
-            mFragmentManager.popBackStackImmediate();
-        } else {
-            mFragmentManager.popBackStack();
-        }
+        allowStateLoss(() -> {
+            if (immediate) {
+                mFragmentManager.popBackStackImmediate();
+            } else {
+                mFragmentManager.popBackStack();
+            }
+        });
     }
 
     @Override
     public void popFragmentToPosition(int position) {
-        performHideSoftInput();
-        if (mFragmentIds.size() > position) {
-            mFragmentIds.subList(position + 1, mFragmentIds.size()).clear();
-            mFragmentManager.popBackStack(mFragmentIds.remove(position), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        int count = getBackStackCount();
+        if (count == 0 || position >= count) {
+            return;
         }
+        performHideSoftInput();
+        allowStateLoss(() -> {
+            int targetIndex = Math.max(0, position);
+            int id = mFragmentManager.getBackStackEntryAt(targetIndex).getId();
+            mFragmentManager.popBackStack(id, FLAG_INCLUSIVE);
+        });
     }
 
     @Override
     public void popFragmentByAmount(int amount) {
-        performHideSoftInput();
-        int size = mFragmentIds.size();
-        if (size - amount < 0) {
-            mFragmentIds.clear();
-            clearBackStack();
-        } else if (size > size - amount) {
-            mFragmentIds.subList(size - amount + 1, size).clear();
-            mFragmentManager.popBackStack((mFragmentIds.remove(size - amount)), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        int count = getBackStackCount();
+        if (count == 0 || amount <= 0) {
+            return;
         }
+        performHideSoftInput();
+        allowStateLoss(() -> {
+            int targetIndex = Math.max(0, count - amount);
+            int targetId = mFragmentManager.getBackStackEntryAt(targetIndex).getId();
+            mFragmentManager.popBackStack(targetId, FLAG_INCLUSIVE);
+        });
     }
 
     @Override
@@ -203,11 +209,10 @@ class ExtraTransaction implements IExtraTransaction {
     @Override
     public void popFragmentTo(@NonNull Class<? extends Fragment> targetFragment, boolean includeTargetFragment) {
         performHideSoftInput();
-        int flag = includeTargetFragment ? FragmentManager.POP_BACK_STACK_INCLUSIVE : 0;
-        boolean isPopped = mFragmentManager.popBackStackImmediate(targetFragment.getName(), flag);
-        if (isPopped && mFragmentIds.size() > getBackStackCount()) {
-            mFragmentIds.subList(getBackStackCount(), mFragmentIds.size()).clear();
-        }
+        allowStateLoss(() -> {
+            int flag = includeTargetFragment ? FLAG_INCLUSIVE : 0;
+            mFragmentManager.popBackStack(targetFragment.getName(), flag);
+        });
     }
 
     private boolean isCurrentFragmentInBackStack() {
@@ -217,8 +222,7 @@ class ExtraTransaction implements IExtraTransaction {
         }
         int backStackCount = getBackStackCount();
         if (getBackStackCount() > 0) {
-            FragmentManager.BackStackEntry topEntry = mFragmentManager.getBackStackEntryAt(backStackCount - 1);
-            String topTag = topEntry.getName();
+            String topTag = mFragmentManager.getBackStackEntryAt(backStackCount - 1).getName();
             String currentTag = currentFragment.getTag();
             return topTag != null && topTag.equals(currentTag);
         }
@@ -228,4 +232,70 @@ class ExtraTransaction implements IExtraTransaction {
     private void performHideSoftInput() {
         mKeyboardManager.hideSoftInput(200);
     }
+
+    private void allowStateLoss(Runnable runnable) {
+        FragmentManager fm = mFragmentManager;
+        if (fm.isStateSaved()) {
+            try {
+                boolean tempStateSaved = FragmentManagerMagician.isStateSaved(fm);
+                boolean tempStopped = FragmentManagerMagician.isStopped(fm);
+                FragmentManagerMagician.setStateSaved(fm, false);
+                FragmentManagerMagician.setStopped(fm, false);
+
+                runnable.run();
+
+                FragmentManagerMagician.setStateSaved(fm, tempStateSaved);
+                FragmentManagerMagician.setStopped(fm, tempStopped);
+            } catch (IllegalAccessException ignored) {
+                runnable.run();
+            }
+        } else {
+            runnable.run();
+        }
+    }
+
+    private static class FragmentManagerMagician {
+
+        private static Field mStateSavedField;
+        private static Field mStoppedField;
+
+        static {
+            try {
+                mStateSavedField = FragmentManager.class.getDeclaredField("mStateSaved");
+                mStateSavedField.setAccessible(true);
+                mStoppedField = FragmentManager.class.getDeclaredField("mStopped");
+                mStoppedField.setAccessible(true);
+            } catch (NoSuchFieldException e) {
+                mStateSavedField = null;
+                mStoppedField = null;
+            }
+        }
+
+        static boolean isStateSaved(FragmentManager fm) throws IllegalAccessException {
+            if (mStateSavedField == null) {
+                return false;
+            }
+            return (Boolean) mStateSavedField.get(fm);
+        }
+
+        static boolean isStopped(FragmentManager fm) throws IllegalAccessException {
+            if (mStoppedField == null) {
+                return false;
+            }
+            return (Boolean) mStoppedField.get(fm);
+        }
+
+        static void setStateSaved(FragmentManager fm, boolean stateSaved) throws IllegalAccessException {
+            if (mStateSavedField != null) {
+                mStateSavedField.set(fm, stateSaved);
+            }
+        }
+
+        static void setStopped(FragmentManager fm, boolean stopped) throws IllegalAccessException {
+            if (mStoppedField != null) {
+                mStoppedField.set(fm, stopped);
+            }
+        }
+    }
+
 }
