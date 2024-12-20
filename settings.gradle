@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "BaseUI"
+rootProject.name = "BaseUi"
 include ':app'
-include ':common-ui'
+include ':base-ui'
