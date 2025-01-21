@@ -20,9 +20,10 @@ import androidx.fragment.app.Fragment;
 import com.mct.base.ui.core.IBaseActivity;
 import com.mct.base.ui.core.IBaseFragment;
 import com.mct.base.ui.core.IExtraTransaction;
+import com.mct.base.ui.core.IWindowInsetsApplier;
 import com.mct.base.ui.core.IKeyboardManager;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements IWindowInsetsApplier {
 
     private Handler mHandler;
     private BaseActivityWrapper mBaseActivity;
@@ -70,7 +71,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Impl
+    // Impl area
     ///////////////////////////////////////////////////////////////////////////
 
     public IBaseActivity getBaseActivity() {

@@ -19,6 +19,7 @@ import com.mct.base.ui.core.IBaseActivity;
 import com.mct.base.ui.core.IBaseFragment;
 import com.mct.base.ui.core.IBaseView;
 import com.mct.base.ui.core.IExtraTransaction;
+import com.mct.base.ui.core.IWindowInsetsApplier;
 import com.mct.base.ui.core.IKeyboardManager;
 import com.mct.base.ui.transition.FragmentTransitionAnimFactory;
 import com.mct.base.ui.transition.animation.NoneAnimation;
@@ -31,7 +32,11 @@ import com.mct.base.ui.transition.options.AnimOptionsData;
 
 import java.lang.reflect.Method;
 
-public abstract class BaseFragment extends Fragment implements IBaseFragment, IBaseView, AnimExtras.AnimExtrasListener {
+public abstract class BaseFragment extends Fragment implements
+        IBaseFragment,
+        IBaseView,
+        IWindowInsetsApplier,
+        AnimExtras.AnimExtrasListener {
 
     private static final int VIEW_ELEVATION = 1;
     private static final int OVERLAY_VIEW_ELEVATION = 0;
