@@ -1,5 +1,8 @@
 package com.mct.base.ui.utils;
 
+import static androidx.core.view.WindowInsetsCompat.Type.InsetsType;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -15,6 +18,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import java.util.Optional;
 
 public class ScreenUtils {
 
@@ -28,6 +36,7 @@ public class ScreenUtils {
      * @return the status bar's height
      */
     public static int getStatusBarHeight(@NonNull Context context) {
+        @SuppressLint("InternalInsetResource")
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         return context.getResources().getDimensionPixelSize(resourceId);
     }
@@ -45,9 +54,9 @@ public class ScreenUtils {
             return 0;
         } else {
             // 99% sure there's a navigation bar
-            Resources res = context.getResources();
-            int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
-            return resourceId != 0 ? res.getDimensionPixelSize(resourceId) : 0;
+            @SuppressLint("InternalInsetResource")
+            int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            return resourceId != 0 ? context.getResources().getDimensionPixelSize(resourceId) : 0;
         }
     }
 
@@ -192,7 +201,6 @@ public class ScreenUtils {
         Bitmap bp = Bitmap.createBitmap(bmp, 0, 0, width, height);
         view.destroyDrawingCache();
         return bp;
-
     }
 
     /**
@@ -215,7 +223,46 @@ public class ScreenUtils {
         Bitmap bp = Bitmap.createBitmap(bmp, 0, statusBarHeight, width, height - statusBarHeight);
         view.destroyDrawingCache();
         return bp;
+    }
 
+    /**
+     * Apply insets to view using padding
+     *
+     * @param view       target view
+     * @param insetsType InsetsType
+     * @see WindowInsetsCompat.Type#systemBars()
+     * @see WindowInsetsCompat.Type#statusBars()
+     * @see WindowInsetsCompat.Type#navigationBars()
+     */
+    public static void applyInsets(@NonNull View view, @InsetsType int insetsType) {
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+            Insets inset = insets.getInsets(insetsType);
+            view.setPadding(inset.left, inset.top, inset.right, inset.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+    }
+
+    /**
+     * Apply insets to view using margin
+     *
+     * @param view       target view
+     * @param insetsType InsetsType
+     * @see WindowInsetsCompat.Type#systemBars()
+     * @see WindowInsetsCompat.Type#statusBars()
+     * @see WindowInsetsCompat.Type#navigationBars()
+     */
+    public static void applyInsets2(@NonNull View view, @InsetsType int insetsType) {
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+            Insets inset = insets.getInsets(insetsType);
+            Optional.ofNullable(view.getLayoutParams())
+                    .filter(lp -> lp instanceof ViewGroup.MarginLayoutParams)
+                    .map(lp -> (ViewGroup.MarginLayoutParams) lp)
+                    .ifPresent(lp -> {
+                        lp.setMargins(inset.left, inset.top, inset.right, inset.bottom);
+                        view.requestLayout();
+                    });
+            return WindowInsetsCompat.CONSUMED;
+        });
     }
 
     public static int dp2px(float dpValue) {
