@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,24 +36,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Fragment fragment = extraTransaction().getCurrentFragment();
+                if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).handleOnBackPressed()) {
+                    return;
+                }
+                if (extraTransaction().getBackStackCount() != 0) {
+                    extraTransaction().popFragment();
+                    return;
+                }
+                if (onHandleBackPressed()) {
+                    return;
+                }
+                finish();
+            }
+        });
         mHandler = new Handler(getMainLooper());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public final void onBackPressed() {
-        Fragment fragment = extraTransaction().getCurrentFragment();
-        if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
-            return;
-        }
-        if (extraTransaction().getBackStackCount() != 0) {
-            extraTransaction().popFragment();
-            return;
-        }
-        if (onHandleBackPressed()) {
-            return;
-        }
-        super.onBackPressed();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -228,7 +229,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         @Override
         public void requestBackPress() {
-            BaseActivity.this.onBackPressed();
+            BaseActivity.this.getOnBackPressedDispatcher().onBackPressed();
         }
 
     }

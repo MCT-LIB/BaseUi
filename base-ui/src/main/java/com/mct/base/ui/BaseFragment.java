@@ -232,12 +232,12 @@ public abstract class BaseFragment extends Fragment implements IBaseFragment, IB
     }
 
     @Override
-    public final boolean onBackPressed() {
+    public final boolean handleOnBackPressed() {
         if (mAnimExtras != null) {
             return true; // block when animation is running.
         }
         Fragment fragment = childExtraTransaction().getCurrentFragment();
-        if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).onBackPressed()) {
+        if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).handleOnBackPressed()) {
             return true;
         }
         if (childExtraTransaction().getBackStackCount() != 0) {

@@ -40,6 +40,6 @@ public interface IBaseFragment {
 
     void requestBackPress();
 
-    boolean onBackPressed();
+    boolean handleOnBackPressed();
 
 }
