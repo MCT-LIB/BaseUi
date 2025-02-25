@@ -238,7 +238,7 @@ public class ScreenUtils {
         ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
             Insets inset = insets.getInsets(insetsType);
             view.setPadding(inset.left, inset.top, inset.right, inset.bottom);
-            return WindowInsetsCompat.CONSUMED;
+            return insets;
         });
     }
 
@@ -261,7 +261,7 @@ public class ScreenUtils {
                         lp.setMargins(inset.left, inset.top, inset.right, inset.bottom);
                         view.requestLayout();
                     });
-            return WindowInsetsCompat.CONSUMED;
+            return insets;
         });
     }
 
